@@ -24,7 +24,7 @@ export function generateToken(): string {
   return result
 }
 
-// Calculate winner based on match format and sets won
+// Calculate winner based on match format and games won
 export function calculateWinner(
   matchFormat: MatchFormat,
   setsWonPlayer1: number,
@@ -41,7 +41,7 @@ export function calculateWinner(
   return null
 }
 
-// Get required sets to win based on match format
+// Get required games to win based on match format
 export function getRequiredSetsToWin(matchFormat: MatchFormat): number {
   switch (matchFormat) {
     case '1_game':
@@ -55,7 +55,7 @@ export function getRequiredSetsToWin(matchFormat: MatchFormat): number {
   }
 }
 
-// Get maximum possible sets for a match format
+// Get maximum possible games for a match format
 export function getMaxSets(matchFormat: MatchFormat): number {
   switch (matchFormat) {
     case '1_game':
@@ -69,7 +69,7 @@ export function getMaxSets(matchFormat: MatchFormat): number {
   }
 }
 
-// Validate set scores
+// Validate game scores
 export function validateSetScores(scores: SetScore[]): boolean {
   return scores.every(score => {
     // Basic ping pong rules: one player must reach at least 11, winner must be 2+ points ahead
@@ -89,7 +89,7 @@ export function validateSetScores(scores: SetScore[]): boolean {
   })
 }
 
-// Calculate sets won from set scores
+// Calculate games won from game scores
 export function calculateSetsFromScores(scores: SetScore[]): {
   player1Sets: number
   player2Sets: number

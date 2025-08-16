@@ -274,9 +274,9 @@ export default function CreateLeaguePage() {
                             {formatMatchFormat(watchedValues.match_format || '3_game')}
                           </p>
                           <p className="text-sm text-text-secondary mt-1">
-                            {watchedValues.match_format === '1_game' && '1セット勝負で勝敗を決定します'}
-                            {watchedValues.match_format === '3_game' && '3セットのうち2セット先取で勝敗を決定します'}
-                            {watchedValues.match_format === '5_game' && '5セットのうち3セット先取で勝敗を決定します'}
+                            {watchedValues.match_format === '1_game' && '1ゲーム勝負で勝敗を決定します'}
+                            {watchedValues.match_format === '3_game' && '3ゲームのうち2ゲーム先取で勝敗を決定します'}
+                            {watchedValues.match_format === '5_game' && '5ゲームのうち3ゲーム先取で勝敗を決定します'}
                           </p>
                         </div>
                       </div>

@@ -170,11 +170,11 @@ export default function LeaguePage({ params }: LeaguePageProps) {
       </header>
       
       {/* Tab Navigation */}
-      <nav className="bg-white border-b border-border-light">
+      <nav className="bg-white border-b border-border-light mb-4">
         <div className="container">
           <div className="flex space-x-8">
             {[
-              { key: 'matrix', label: 'マトリクス表' },
+              { key: 'matrix', label: '対戦表' },
               { key: 'standings', label: '順位表' },
               { key: 'matches', label: '試合一覧' },
             ].map(tab => (
@@ -194,11 +194,10 @@ export default function LeaguePage({ params }: LeaguePageProps) {
         </div>
       </nav>
       
-      <div className="container py-8">
+      <div className="container">
         {/* Matrix Tab */}
         {activeTab === 'matrix' && (
           <div>
-            <h2 className="text-xl font-semibold mb-6">対戦マトリクス</h2>
             <MatchMatrix 
               players={league.players} 
               matches={league.matches}
@@ -213,7 +212,6 @@ export default function LeaguePage({ params }: LeaguePageProps) {
         {/* Standings Tab */}
         {activeTab === 'standings' && (
           <div>
-            <h2 className="text-xl font-semibold mb-6">順位表</h2>
             <StandingsTable standings={standings} />
           </div>
         )}
@@ -221,7 +219,6 @@ export default function LeaguePage({ params }: LeaguePageProps) {
         {/* Matches Tab */}
         {activeTab === 'matches' && (
           <div>
-            <h2 className="text-xl font-semibold mb-6">試合一覧</h2>
             <MatchesList 
               matches={league.matches} 
               players={league.players}
@@ -441,7 +438,7 @@ function StandingsTable({ standings }: { standings: Standing[] }) {
                 <th className="text-center p-4 font-medium text-text-secondary">勝数</th>
                 <th className="text-center p-4 font-medium text-text-secondary">負数</th>
                 <th className="text-center p-4 font-medium text-text-secondary">試合数</th>
-                <th className="text-center p-4 font-medium text-text-secondary">得失セット</th>
+                <th className="text-center p-4 font-medium text-text-secondary">得失ゲーム</th>
               </tr>
             </thead>
             <tbody>
