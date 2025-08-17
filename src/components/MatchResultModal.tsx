@@ -222,9 +222,6 @@ export default function MatchResultModal({
 					<div className="space-y-4">
 						<p className="text-gray-600">試合結果を選択してください</p>
 						<div className="space-y-3">
-							<div className="text-sm font-medium text-gray-700 mb-3">
-								{player1.name} vs {player2.name}
-							</div>
 							<div className="grid grid-cols-2 gap-4">
 								{/* Player1の勝利パターン（左側） */}
 								<div className="space-y-2">

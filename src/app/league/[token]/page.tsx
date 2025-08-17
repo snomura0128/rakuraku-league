@@ -8,6 +8,7 @@ import {
 	Play,
 	Settings,
 	Share,
+	Table as TableIcon,
 	Trophy,
 	Users,
 } from "lucide-react";
@@ -58,6 +59,22 @@ export default function LeaguePage({ params }: LeaguePageProps) {
 		player1: Player;
 		player2: Player;
 	} | null>(null);
+
+	const handleShare = async () => {
+		const shareData = {
+			title: `${league?.name} - らくらくリーグ戦`,
+			text: `${league?.name}のリーグ戦をチェックしよう！`,
+			url: window.location.href,
+		};
+
+		if (navigator.share) {
+			await navigator.share(shareData);
+		} else {
+			// Web Share APIがサポートされていない場合はクリップボードにコピー
+			await navigator.clipboard.writeText(window.location.href);
+			alert("URLをクリップボードにコピーしました");
+		}
+	};
 
 	useEffect(() => {
 		async function fetchLeague() {
@@ -181,17 +198,30 @@ export default function LeaguePage({ params }: LeaguePageProps) {
 									asChild
 									className="text-muted-foreground hover:text-foreground"
 								>
-									<Link href="/">
+									{/* <Link href="/">
 										<Home className="mr-2 h-4 w-4" />
 										ホーム
-									</Link>
+									</Link> */}
 								</Button>
 								<Badge
 									variant={league.is_admin ? "default" : "secondary"}
 									className="shrink-0"
 								>
-									{league.is_admin ? "管理者" : "閲覧者"}
+									{league.is_admin ? "編集モード" : "閲覧者"}
 								</Badge>
+
+								{league.is_admin && (
+									<div className="flex gap-2 ml-auto">
+										<Button variant="outline" size="sm">
+											<Settings className="h-4 w-4 mr-2" />
+											設定
+										</Button>
+										<Button size="sm" onClick={handleShare}>
+											<Share className="h-4 w-4 mr-2" />
+											共有
+										</Button>
+									</div>
+								)}
 							</div>
 
 							<div className="space-y-2">
@@ -205,9 +235,9 @@ export default function LeaguePage({ params }: LeaguePageProps) {
 								)}
 							</div>
 
-							<div className="flex flex-wrap items-center gap-4 mt-4 text-sm">
+							<div className="flex items-start sm:items-center sm:gap-4 gap-2 mt-4 text-sm">
 								<div className="flex items-center gap-1 text-muted-foreground">
-									<Play className="h-4 w-4" />
+									<TableIcon className="h-4 w-4" />
 									<span>{league.table_count}台</span>
 								</div>
 								<div className="flex items-center gap-1 text-muted-foreground">
@@ -224,19 +254,6 @@ export default function LeaguePage({ params }: LeaguePageProps) {
 								</div>
 							</div>
 						</div>
-
-						{league.is_admin && (
-							<div className="flex gap-2 shrink-0">
-								<Button variant="outline" size="sm">
-									<Settings className="h-4 w-4 mr-2" />
-									設定
-								</Button>
-								<Button size="sm">
-									<Share className="h-4 w-4 mr-2" />
-									共有
-								</Button>
-							</div>
-						)}
 					</div>
 				</div>
 			</header>
@@ -255,16 +272,16 @@ export default function LeaguePage({ params }: LeaguePageProps) {
 							対戦表
 						</TabsTrigger>
 						<TabsTrigger
-							value="standings"
-							className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-						>
-							順位表
-						</TabsTrigger>
-						<TabsTrigger
 							value="matches"
 							className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
 						>
 							試合一覧
+						</TabsTrigger>
+						<TabsTrigger
+							value="standings"
+							className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+						>
+							順位表
 						</TabsTrigger>
 					</TabsList>
 
@@ -278,11 +295,6 @@ export default function LeaguePage({ params }: LeaguePageProps) {
 							}
 						/>
 					</TabsContent>
-
-					<TabsContent value="standings" className="space-y-4">
-						<StandingsTable standings={standings} />
-					</TabsContent>
-
 					<TabsContent value="matches" className="space-y-4">
 						<MatchesList
 							matches={league.matches}
@@ -292,6 +304,9 @@ export default function LeaguePage({ params }: LeaguePageProps) {
 								setSelectedMatch({ match, player1, player2 })
 							}
 						/>
+					</TabsContent>
+					<TabsContent value="standings" className="space-y-4">
+						<StandingsTable standings={standings} />
 					</TabsContent>
 				</Tabs>
 			</div>
@@ -669,7 +684,7 @@ function MatchesList({
 				return (
 					<Card
 						key={match.id}
-						className={`transition-all ${isClickable ? "cursor-pointer hover:shadow-md hover:border-primary/50" : ""}`}
+						className={isClickable ? "cursor-pointer" : ""}
 						onClick={() => {
 							if (isClickable && player1 && player2) {
 								onMatchClick(match, player1, player2);

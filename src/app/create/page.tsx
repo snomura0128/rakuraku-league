@@ -77,7 +77,7 @@ export default function CreateLeaguePage() {
 			name: "",
 			description: "",
 			table_count: 2,
-			match_format: "3_game",
+			match_format: "5_game",
 			participants: ["", "", ""],
 		},
 		mode: "onChange",
@@ -313,7 +313,7 @@ export default function CreateLeaguePage() {
 															value as "1_game" | "3_game" | "5_game",
 														)
 													}
-													defaultValue="3_game"
+													defaultValue="5_game"
 												>
 													<SelectTrigger id="match_format">
 														<SelectValue placeholder="試合形式を選択" />
@@ -358,7 +358,7 @@ export default function CreateLeaguePage() {
 												<div>
 													<p className="font-medium text-text-primary">
 														{formatMatchFormat(
-															watchedValues.match_format || "3_game",
+															watchedValues.match_format || "5_game",
 														)}
 													</p>
 													<p className="text-sm text-text-secondary mt-1">
@@ -500,7 +500,7 @@ export default function CreateLeaguePage() {
 													</h4>
 													<p className="text-text-secondary">
 														{formatMatchFormat(
-															watchedValues.match_format || "3_game",
+															watchedValues.match_format || "5_game",
 														)}
 													</p>
 												</div>
