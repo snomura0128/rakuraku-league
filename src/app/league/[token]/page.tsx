@@ -259,7 +259,7 @@ export default function LeaguePage({ params }: LeaguePageProps) {
 				</div>
 			</header>
 
-			<div className="container mx-auto px-4 py-6">
+			<div className="container mx-auto px-2 py-6">
 				<Tabs
 					value={activeTab}
 					onValueChange={(value) => setActiveTab(value as any)}
@@ -369,7 +369,7 @@ function MatchMatrix({
 			>
 				<table className="relative border-collapse table-fixed" style={{ width: `${160 + 80 * players.length}px` }}>
 					<colgroup>
-						<col style={{ width: "140px" }} />
+						<col style={{ width: "100px" }} />
 						{players.map((player) => (
 							<col key={player.id} style={{ width: "80px" }} />
 						))}
@@ -382,7 +382,7 @@ function MatchMatrix({
 									key={player.id}
 									className="text-center min-w-20 bg-white border-b z-20 p-1 font-semibold"
 								>
-									<div className="truncate px-2 text-sm" title={player.name}>{player.name}</div>
+									<div className="px-2 text-sm leading-tight line-clamp-2" title={player.name}>{player.name}</div>
 								</th>
 							))}
 						</tr>
@@ -391,7 +391,7 @@ function MatchMatrix({
 						{players.map((player1) => (
 							<tr key={player1.id}>
 								<td className="font-semibold bg-white sticky left-0 border-r z-10 min-w-20 p-1">
-									<div className="truncate px-2 text-sm" title={player1.name}>{player1.name}</div>
+									<div className="px-2 text-sm leading-tight line-clamp-2" title={player1.name}>{player1.name}</div>
 								</td>
 								{players.map((player2) => (
 									<td key={player2.id} className="p-0.5 text-center">
