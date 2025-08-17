@@ -272,6 +272,13 @@ export default function MatchResultModal({
 								キャンセル
 							</button>
 							<button
+								onClick={handleResetMatch}
+								disabled={isSubmitting}
+								className="flex-1 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 disabled:opacity-50"
+							>
+								{isSubmitting ? "取消中..." : "試合取消"}
+							</button>
+							<button
 								onClick={handleCompleteMatch}
 								disabled={isSubmitting || !selectedScore}
 								className="flex-1 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 disabled:opacity-50"

@@ -1,13 +1,14 @@
 "use client";
 
 import {
+	Ban,
 	Calendar,
 	CheckCircle,
-	Clock,
 	Home,
 	Play,
 	Settings,
 	Share,
+	Swords,
 	Table as TableIcon,
 	Trophy,
 	Users,
@@ -383,9 +384,9 @@ function MatchMatrix({
 									<div className="truncate px-2">{player1.name}</div>
 								</td>
 								{players.map((player2) => (
-									<td key={player2.id} className="p-1 text-center">
+									<td key={player2.id} className="p-0.5 text-center">
 										{player1.id === player2.id ? (
-											<div className="w-16 h-16 bg-muted/50 rounded-lg flex items-center justify-center mx-auto">
+											<div className="w-full h-20 bg-muted/50 rounded-lg flex items-center justify-center">
 												<span className="text-muted-foreground text-lg">-</span>
 											</div>
 										) : (
@@ -453,18 +454,20 @@ function MatchCell({
 
 	const getStatusStyle = () => {
 		if (match.status === "pending" && isDisabled) {
-			return "bg-muted text-muted-foreground cursor-not-allowed";
+			return "bg-white border-2 border-gray-200 text-gray-500 cursor-not-allowed opacity-70 transition-all duration-150";
 		}
+
+		const clickableStyle = "bg-white shadow-md border-2 transition-all duration-150 cursor-pointer hover:shadow-lg active:shadow-inner active:transform active:translate-y-1";
 
 		switch (match.status) {
 			case "pending":
-				return "bg-secondary hover:bg-secondary/80 text-secondary-foreground cursor-pointer";
+				return `${clickableStyle} border-blue-200 hover:border-blue-300 text-blue-700`;
 			case "playing":
-				return "bg-orange-100 text-orange-800 border border-orange-300 animate-pulse";
+				return `${clickableStyle} border-orange-300 hover:border-orange-400 text-orange-700`;
 			case "completed":
-				return "bg-green-100 text-green-800 border border-green-300";
+				return `${clickableStyle} border-gray-200 hover:border-gray-300 text-gray-600`;
 			default:
-				return "bg-muted text-muted-foreground";
+				return `${clickableStyle} border-gray-200 text-muted-foreground`;
 		}
 	};
 
@@ -508,16 +511,18 @@ function MatchCell({
 
 		if (match.status === "playing") {
 			return (
-				<div className="flex items-center justify-center">
-					<Clock className="h-4 w-4" />
+				<div className="flex flex-col items-center justify-center gap-1">
+					<Swords className="h-4 w-4" />
+					<div className="text-xs font-medium">試合中</div>
 				</div>
 			);
 		}
 
 		if (match.status === "pending" && isDisabled) {
 			return (
-				<div className="flex items-center justify-center">
-					<Clock className="h-3 w-3" />
+				<div className="flex flex-col items-center justify-center gap-1">
+					<Ban className="h-4 w-4" />
+					<div className="text-xs font-medium">試合不可</div>
 				</div>
 			);
 		}
@@ -535,7 +540,7 @@ function MatchCell({
 		<Button
 			variant="ghost"
 			size="sm"
-			className={`w-16 h-16 rounded-lg p-1 text-xs font-medium ${getStatusStyle()}`}
+			className={`w-full h-20 rounded-lg p-1 text-xs font-medium ${getStatusStyle()}`}
 			disabled={!isClickable}
 			onClick={() => {
 				if (isClickable) {
@@ -648,9 +653,9 @@ function MatchesList({
 		if (status === "completed")
 			return <CheckCircle className="h-4 w-4 text-green-600" />;
 		if (status === "playing")
-			return <Clock className="h-4 w-4 text-orange-600" />;
-		if (isDisabled) return <Clock className="h-4 w-4 text-muted-foreground" />;
-		return <Play className="h-4 w-4 text-muted-foreground" />;
+			return <Swords className="h-4 w-4 text-orange-600" />;
+		if (isDisabled) return <Ban className="h-4 w-4 text-gray-500" />;
+		return <Play className="h-4 w-4 text-blue-600" />;
 	};
 
 	const getStatusBadge = (status: string, isDisabled: boolean) => {
@@ -671,7 +676,7 @@ function MatchesList({
 	};
 
 	return (
-		<div className="space-y-3">
+		<div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
 			{matches.map((match) => {
 				const player1 = getPlayer(match.player1_id);
 				const player2 = getPlayer(match.player2_id);
@@ -681,39 +686,77 @@ function MatchesList({
 						isPlayerInPlayingMatch(match.player2_id));
 				const isClickable = isAdmin && !isDisabled;
 
+				// Get border and text color based on status
+				const getCardStyle = () => {
+					if (match.status === "pending" && isDisabled) {
+						return "border-gray-200";
+					}
+					switch (match.status) {
+						case "pending":
+							return "border-blue-200";
+						case "playing":
+							return "border-orange-300";
+						case "completed":
+							return "border-gray-200";
+						default:
+							return "border-gray-200";
+					}
+				};
+
+				const getTextColor = () => {
+					if (match.status === "pending" && isDisabled) {
+						return "text-gray-500";
+					}
+					switch (match.status) {
+						case "pending":
+							return "text-blue-700";
+						case "playing":
+							return "text-orange-700";
+						case "completed":
+							return "text-gray-600";
+						default:
+							return "text-gray-500";
+					}
+				};
+
 				return (
 					<Card
 						key={match.id}
-						className={isClickable ? "cursor-pointer" : ""}
+						className={`${isClickable ? "cursor-pointer" : ""} border-2 ${getCardStyle()}`}
 						onClick={() => {
 							if (isClickable && player1 && player2) {
 								onMatchClick(match, player1, player2);
 							}
 						}}
 					>
-						<CardContent className="p-4">
-							<div className="flex items-center justify-between">
-								<div className="flex items-center gap-3">
+						<CardContent className="p-4 h-20">
+							<div className="flex items-center gap-3 h-full">
+								<div className="flex flex-col items-center justify-center gap-1 min-w-16">
 									{getStatusIcon(match.status, isDisabled)}
-									<div className="space-y-1">
-										<div className="font-medium">
-											{getPlayerName(match.player1_id)} vs{" "}
-											{getPlayerName(match.player2_id)}
-										</div>
-										{match.status === "completed" && match.winner_id && (
-											<div className="text-sm text-muted-foreground">
-												勝者: {getPlayerName(match.winner_id)} (
-												{match.sets_won_player1}-{match.sets_won_player2})
-											</div>
-										)}
-										{isDisabled && (
-											<div className="text-sm text-muted-foreground">
-												いずれかの選手が試合中のため待機中
-											</div>
-										)}
+									<div className={`text-xs text-center font-medium ${getTextColor()}`}>
+										{match.status === "completed" && "試合終了"}
+										{match.status === "playing" && "試合中"}
+										{match.status === "pending" && !isDisabled && "未実施"}
+										{match.status === "pending" && isDisabled && "試合不可"}
 									</div>
 								</div>
-								{getStatusBadge(match.status, isDisabled)}
+								<div className="flex-1 min-w-0">
+									<div className="font-medium truncate">
+										{getPlayerName(match.player1_id)} vs{" "}
+										{getPlayerName(match.player2_id)}
+									</div>
+									{match.status === "completed" && match.winner_id && (
+										<div className="text-sm text-muted-foreground truncate">
+											勝者: {getPlayerName(match.winner_id)} (
+											{match.sets_won_player1}-{match.sets_won_player2})
+										</div>
+									)}
+									{isDisabled && (
+										<div className="text-sm text-muted-foreground truncate">
+											いずれかの選手が試合中のため
+										</div>
+									)}
+								</div>
 							</div>
 						</CardContent>
 					</Card>
