@@ -297,7 +297,7 @@ export default function MatchResultModal({
 							<button
 								onClick={handleCompleteMatch}
 								disabled={isSubmitting || !selectedScore}
-								className="flex-1 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 disabled:opacity-50 shadow-md hover:shadow-lg active:shadow-inner active:transform active:scale-95"
+								className={`flex-1 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 disabled:opacity-50 shadow-md hover:shadow-lg ${!(isSubmitting || !selectedScore) ? 'active:shadow-inner active:transform active:scale-95' : ''}`}
 							>
 								{isSubmitting ? "確定中..." : "確定"}
 							</button>
@@ -384,7 +384,7 @@ export default function MatchResultModal({
 							<button
 								onClick={handleCompleteMatch}
 								disabled={isSubmitting || !selectedScore}
-								className="flex-1 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 disabled:opacity-50 shadow-md hover:shadow-lg active:shadow-inner active:transform active:scale-95"
+								className={`flex-1 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 disabled:opacity-50 shadow-md hover:shadow-lg ${!(isSubmitting || !selectedScore) ? 'active:shadow-inner active:transform active:scale-95' : ''}`}
 							>
 								{isSubmitting ? "更新中..." : "結果更新"}
 							</button>
