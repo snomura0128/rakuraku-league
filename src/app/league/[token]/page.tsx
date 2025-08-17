@@ -301,6 +301,7 @@ export default function LeaguePage({ params }: LeaguePageProps) {
 							players={league.players}
 							matches={league.matches}
 							isAdmin={league.is_admin}
+							tables={league.tables}
 							onMatchClick={(match, player1, player2) =>
 								setSelectedMatch({ match, player1, player2 })
 							}
@@ -357,32 +358,59 @@ function MatchMatrix({
 		);
 	};
 
+	const [cellSizes, setCellSizes] = useState({ 
+		leftCol: 100, 
+		cellCol: 80, 
+		cellHeight: 80, 
+		fontSize: 'text-sm',
+		padding: 'p-2'
+	});
+	
+	useEffect(() => {
+		const updateSizes = () => {
+			const isMobile = window.innerWidth < 768;
+			setCellSizes({
+				leftCol: isMobile ? 80 : 100,
+				cellCol: isMobile ? 70 : 80,
+				cellHeight: isMobile ? 60 : 80,
+				fontSize: isMobile ? 'text-xs' : 'text-sm',
+				padding: isMobile ? 'p-1' : 'p-2'
+			});
+		};
+		
+		updateSizes();
+		window.addEventListener('resize', updateSizes);
+		return () => window.removeEventListener('resize', updateSizes);
+	}, []);
+
 	return (
 		<div className="w-full">
 			<div
 				className="overflow-auto border rounded-lg mx-auto"
 				style={{ 
 					maxHeight: "70vh", 
-					width: `${180 + 80 * players.length}px`,
+					width: `${cellSizes.leftCol + cellSizes.cellCol * players.length}px`,
 					maxWidth: "100%"
 				}}
 			>
-				<table className="relative border-collapse table-fixed" style={{ width: `${160 + 80 * players.length}px` }}>
+				<table className="relative border-collapse table-fixed" style={{ 
+				width: `${cellSizes.leftCol + cellSizes.cellCol * players.length}px`
+			}}>
 					<colgroup>
-						<col style={{ width: "100px" }} />
+						<col style={{ width: `${cellSizes.leftCol}px` }} />
 						{players.map((player) => (
-							<col key={player.id} style={{ width: "80px" }} />
+							<col key={player.id} style={{ width: `${cellSizes.cellCol}px` }} />
 						))}
 					</colgroup>
 					<thead className="sticky top-0 z-20 bg-white">
 						<tr>
-							<th className="font-semibold bg-white border-b border-r sticky left-0 z-30 p-3 text-left min-w-20"></th>
+							<th className={`font-semibold bg-white border-b border-r sticky left-0 z-30 ${cellSizes.padding} text-left min-w-20`}></th>
 							{players.map((player) => (
 								<th
 									key={player.id}
 									className="text-center min-w-20 bg-white border-b z-20 p-1 font-semibold"
 								>
-									<div className="px-2 text-sm leading-tight line-clamp-2" title={player.name}>{player.name}</div>
+									<div className={`px-2 ${cellSizes.fontSize} leading-tight line-clamp-2`} title={player.name}>{player.name}</div>
 								</th>
 							))}
 						</tr>
@@ -391,12 +419,12 @@ function MatchMatrix({
 						{players.map((player1) => (
 							<tr key={player1.id}>
 								<td className="font-semibold bg-white sticky left-0 border-r z-10 min-w-20 p-1">
-									<div className="px-2 text-sm leading-tight line-clamp-2" title={player1.name}>{player1.name}</div>
+									<div className={`px-2 ${cellSizes.fontSize} leading-tight line-clamp-2`} title={player1.name}>{player1.name}</div>
 								</td>
 								{players.map((player2) => (
 									<td key={player2.id} className="p-0.5 text-center">
 										{player1.id === player2.id ? (
-											<div className="w-full h-20 bg-muted/50 rounded-lg flex items-center justify-center">
+											<div className="w-full bg-muted/50 rounded-lg flex items-center justify-center" style={{ height: `${cellSizes.cellHeight}px` }}>
 												<span className="text-muted-foreground text-lg">-</span>
 											</div>
 										) : (
@@ -409,6 +437,7 @@ function MatchMatrix({
 													isPlayerInPlayingMatch(player1.id) ||
 													isPlayerInPlayingMatch(player2.id)
 												}
+												cellHeight={cellSizes.cellHeight}
 												onMatchClick={onMatchClick}
 											/>
 										)}
@@ -428,11 +457,13 @@ function MobileMatchCards({
 	players,
 	matches,
 	isAdmin,
+	tables,
 	onMatchClick,
 }: {
 	players: Player[];
 	matches: Match[];
 	isAdmin: boolean;
+	tables: any[];
 	onMatchClick: (match: Match, player1: Player, player2: Player) => void;
 }) {
 	const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'playing' | 'completed'>('pending');
@@ -544,7 +575,7 @@ function MobileMatchCards({
 				</div>
 			)}
 
-			<div className="space-y-3 px-4">
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-3 px-4">
 			{filteredMatches.map(({ match, player1, player2 }) => {
 				const matchKey = `${player1.id}-${player2.id}`;
 				const isDisabled = isPlayerInPlayingMatch(player1.id) || isPlayerInPlayingMatch(player2.id);
@@ -553,8 +584,8 @@ function MobileMatchCards({
 				return (
 					<div
 						key={matchKey}
-						className={`bg-white border rounded-lg p-4 shadow-sm ${
-							isClickable ? "cursor-pointer hover:shadow-md transition-shadow" : ""
+						className={`bg-white border rounded-lg p-4 ${
+							isClickable ? "shadow-md cursor-pointer hover:shadow-lg active:shadow-inner active:transform active:scale-95 transition-all duration-150" : "shadow-sm"
 						}`}
 						onClick={() => {
 							if (isClickable) {
@@ -602,7 +633,11 @@ function MobileMatchCards({
 								</div>
 							) : (
 								<div className="text-center text-gray-500">
-									{match.status === "playing" && "試合中"}
+									{match.status === "playing" && (
+										match.table_id 
+											? `${tables.find(t => t.id === match.table_id)?.table_number || ''}番台で試合中`
+											: '試合中'
+									)}
 									{match.status === "pending" && (isDisabled ? "他の試合中のため対戦不可" : "タップして試合開始")}
 								</div>
 							)}
@@ -622,6 +657,7 @@ function MatchCell({
 	player2,
 	isAdmin,
 	isDisabled,
+	cellHeight,
 	onMatchClick,
 }: {
 	match: Match | undefined;
@@ -629,6 +665,7 @@ function MatchCell({
 	player2: Player;
 	isAdmin: boolean;
 	isDisabled: boolean;
+	cellHeight: number;
 	onMatchClick: (match: Match, player1: Player, player2: Player) => void;
 }) {
 	const [checkmarkAnimationData, setCheckmarkAnimationData] =
@@ -750,7 +787,8 @@ function MatchCell({
 		<Button
 			variant="ghost"
 			size="sm"
-			className={`w-full h-20 rounded-lg p-1 text-xs font-medium ${getStatusStyle()}`}
+			className={`w-full rounded-lg p-1 text-xs font-medium ${getStatusStyle()}`}
+			style={{ height: `${cellHeight}px` }}
 			disabled={!isClickable}
 			onClick={() => {
 				if (isClickable) {
