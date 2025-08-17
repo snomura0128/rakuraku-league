@@ -1,44 +1,22 @@
-import { cn } from '@/lib/utils'
-import { forwardRef } from 'react'
+import * as React from "react";
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string
-  error?: string
-  helperText?: string
-}
+import { cn } from "@/lib/utils";
 
-const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, helperText, ...props }, ref) => {
-    return (
-      <div className="space-y-2">
-        {label && (
-          <label className="block text-sm font-medium text-text-primary">
-            {label}
-            {props.required && <span className="text-primary ml-1">*</span>}
-          </label>
-        )}
-        <input
-          className={cn(
-            'input',
-            error && 'border-red-500 focus:border-red-500 focus:ring-red-500/20',
-            className
-          )}
-          ref={ref}
-          {...props}
-        />
-        {error && (
-          <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
-            <span>⚠</span> {error}
-          </p>
-        )}
-        {helperText && !error && (
-          <p className="text-sm text-text-secondary">{helperText}</p>
-        )}
-      </div>
-    )
-  }
-)
+const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
+	({ className, type, ...props }, ref) => {
+		return (
+			<input
+				type={type}
+				className={cn(
+					"flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+					className,
+				)}
+				ref={ref}
+				{...props}
+			/>
+		);
+	},
+);
+Input.displayName = "Input";
 
-Input.displayName = 'Input'
-
-export { Input }
+export { Input };
