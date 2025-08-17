@@ -360,19 +360,29 @@ function MatchMatrix({
 	return (
 		<div className="w-full">
 			<div
-				className="overflow-auto border rounded-lg"
-				style={{ maxHeight: "70vh" }}
+				className="overflow-auto border rounded-lg mx-auto"
+				style={{ 
+					maxHeight: "70vh", 
+					width: `${180 + 80 * players.length}px`,
+					maxWidth: "100%"
+				}}
 			>
-				<table className="relative w-full border-collapse">
+				<table className="relative border-collapse table-fixed" style={{ width: `${160 + 80 * players.length}px` }}>
+					<colgroup>
+						<col style={{ width: "140px" }} />
+						{players.map((player) => (
+							<col key={player.id} style={{ width: "80px" }} />
+						))}
+					</colgroup>
 					<thead className="sticky top-0 z-20 bg-white">
 						<tr>
 							<th className="font-semibold bg-white border-b border-r sticky left-0 z-30 p-3 text-left min-w-20"></th>
 							{players.map((player) => (
 								<th
 									key={player.id}
-									className="text-center min-w-20 bg-white border-b z-20 p-3 font-semibold"
+									className="text-center min-w-20 bg-white border-b z-20 p-1 font-semibold"
 								>
-									<div className="truncate px-2">{player.name}</div>
+									<div className="truncate px-2 text-sm" title={player.name}>{player.name}</div>
 								</th>
 							))}
 						</tr>
@@ -380,8 +390,8 @@ function MatchMatrix({
 					<tbody>
 						{players.map((player1) => (
 							<tr key={player1.id}>
-								<td className="font-semibold bg-white sticky left-0 border-r z-10 min-w-20 p-3">
-									<div className="truncate px-2">{player1.name}</div>
+								<td className="font-semibold bg-white sticky left-0 border-r z-10 min-w-20 p-1">
+									<div className="truncate px-2 text-sm" title={player1.name}>{player1.name}</div>
 								</td>
 								{players.map((player2) => (
 									<td key={player2.id} className="p-0.5 text-center">
