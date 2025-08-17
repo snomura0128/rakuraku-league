@@ -238,16 +238,16 @@ export default function LeaguePage({ params }: LeaguePageProps) {
 
 							<div className="flex items-start sm:items-center sm:gap-4 gap-2 mt-4 text-sm">
 								<div className="flex items-center gap-1 text-muted-foreground">
-									<TableIcon className="h-4 w-4" />
-									<span>{league.table_count}台</span>
-								</div>
-								<div className="flex items-center gap-1 text-muted-foreground">
 									<Trophy className="h-4 w-4" />
 									<span>{formatMatchFormat(league.match_format)}</span>
 								</div>
 								<div className="flex items-center gap-1 text-muted-foreground">
 									<Users className="h-4 w-4" />
 									<span>{league.players.length}名</span>
+								</div>
+								<div className="flex items-center gap-1 text-muted-foreground">
+									<TableIcon className="h-4 w-4" />
+									<span>{league.table_count}台</span>
 								</div>
 								<div className="flex items-center gap-1 text-muted-foreground">
 									<Calendar className="h-4 w-4" />

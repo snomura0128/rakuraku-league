@@ -10,8 +10,8 @@ const createLeagueSchema = z.object({
 	description: z.string().max(500).optional(),
 	table_count: z.number().min(1).max(10),
 	match_format: z.enum(["1_game", "3_game", "5_game"]),
-	participants: z.array(z.string().min(1).max(50)).min(3).max(20),
-});
+	participants: z.array(z.string().min(1).max(50)).min(3).max(15),
+});;
 
 export async function POST(request: NextRequest) {
 	try {
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 			updated_at: new Date().toISOString(),
 		});
 
-		// Create participants
+		// Create players
 		const participantIds = validatedData.participants.map(() => generateId());
 		await db.insert(players).values(
 			validatedData.participants.map((name, index) => ({
