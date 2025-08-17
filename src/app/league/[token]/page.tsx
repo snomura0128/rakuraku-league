@@ -213,10 +213,10 @@ export default function LeaguePage({ params }: LeaguePageProps) {
 
 								{league.is_admin && (
 									<div className="flex gap-2 ml-auto">
-										<Button variant="outline" size="sm">
+										{/* <Button variant="outline" size="sm">
 											<Settings className="h-4 w-4 mr-2" />
 											設定
-										</Button>
+										</Button> */}
 										<Button size="sm" onClick={handleShare}>
 											<Share className="h-4 w-4 mr-2" />
 											共有
