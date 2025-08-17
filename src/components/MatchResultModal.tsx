@@ -94,6 +94,7 @@ export default function MatchResultModal({
 	const availableTables = tables.filter(
 		(table) => table.status === "available",
 	);
+	const allTables = tables;
 
 	const getScoreOptions = (format: MatchFormat) => {
 		switch (format) {
@@ -179,7 +180,7 @@ export default function MatchResultModal({
 					</h2>
 					<button
 						onClick={onClose}
-						className="text-gray-500 hover:text-gray-700"
+						className="text-gray-500 hover:text-gray-700 text-2xl"
 					>
 						✕
 					</button>
@@ -188,29 +189,44 @@ export default function MatchResultModal({
 				{match.status === "pending" && (
 					<div className="space-y-4">
 						<p className="text-gray-600">使用する台を選択してください</p>
-						{availableTables.length > 0 ? (
-							<div className="space-y-2 max-h-48 overflow-y-auto">
-								{availableTables.map((table) => (
-									<button
-										key={table.id}
-										onClick={() => handleTableSelect(table.id)}
-										disabled={isSubmitting}
-										className="w-full p-3 text-left bg-gray-50 hover:bg-gray-100 rounded border disabled:opacity-50"
-									>
-										<div className="font-medium">{table.table_number}番台</div>
-										<div className="text-sm text-gray-500">空き</div>
-									</button>
-								))}
+						{allTables.length > 0 ? (
+							<div className="grid grid-cols-2 gap-3 max-h-48 overflow-y-auto">
+								{allTables.map((table) => {
+									const isAvailable = table.status === "available";
+									return (
+										<button
+											key={table.id}
+											onClick={() => isAvailable && !isSubmitting && handleTableSelect(table.id)}
+											disabled={!isAvailable || isSubmitting}
+											className={`p-4 h-20 text-center rounded-lg border-2 transition-all duration-150 flex flex-col justify-center items-center ${
+												isAvailable
+													? "bg-white border-blue-200 shadow-md hover:shadow-lg active:shadow-inner active:transform active:scale-95 hover:border-blue-300 active:shadow-inner active:transform active:scale-95"
+													: "bg-gray-100 border-gray-200 shadow-sm opacity-60 cursor-not-allowed"
+											}`}
+										>
+											<div className={`font-semibold text-lg ${
+												isAvailable ? "text-blue-700" : "text-gray-500"
+											}`}>
+												{table.table_number}番台
+											</div>
+											{!isAvailable && (
+												<div className="text-sm text-gray-400 mt-1">
+													使用中
+												</div>
+											)}
+										</button>
+									);
+								})}
 							</div>
 						) : (
 							<div className="text-center py-4 text-gray-500">
-								利用可能な台がありません
+								台がありません
 							</div>
 						)}
 						<div className="flex gap-2">
 							<button
 								onClick={onClose}
-								className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-50"
+								className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-50 shadow-md hover:shadow-lg active:shadow-inner active:transform active:scale-95"
 							>
 								キャンセル
 							</button>
@@ -225,7 +241,7 @@ export default function MatchResultModal({
 							<div className="grid grid-cols-2 gap-4">
 								{/* Player1の勝利パターン（左側） */}
 								<div className="space-y-2">
-									<div className="text-xs font-medium text-gray-600 text-center bg-blue-50 py-1 rounded">
+									<div className="text-xs font-medium text-slate-800 text-center bg-slate-100 py-1 rounded">
 										{player1.name}勝利
 									</div>
 									{player1Options.map((score) => (
@@ -234,8 +250,8 @@ export default function MatchResultModal({
 											onClick={() => handleScoreSelect(score)}
 											className={`w-full p-3 rounded border text-center font-medium transition-all ${
 												selectedScore === score.label
-													? "bg-blue-500 text-white border-blue-500"
-													: "bg-blue-50 hover:bg-blue-100 border-blue-300"
+													? "bg-slate-200 text-slate-800 border-slate-400 shadow-inner"
+													: "bg-white hover:bg-slate-50 border-slate-300 shadow-sm hover:shadow-md"
 											}`}
 										>
 											<div className="text-lg">{score.label}</div>
@@ -245,7 +261,7 @@ export default function MatchResultModal({
 
 								{/* Player2の勝利パターン（右側） */}
 								<div className="space-y-2">
-									<div className="text-xs font-medium text-gray-600 text-center bg-green-50 py-1 rounded">
+									<div className="text-xs font-medium text-slate-800 text-center bg-slate-100 py-1 rounded">
 										{player2.name}勝利
 									</div>
 									{player2Options.map((score) => (
@@ -254,8 +270,8 @@ export default function MatchResultModal({
 											onClick={() => handleScoreSelect(score)}
 											className={`w-full p-3 rounded border text-center font-medium transition-all ${
 												selectedScore === score.label
-													? "bg-green-500 text-white border-green-500"
-													: "bg-green-50 hover:bg-green-100 border-green-300"
+													? "bg-slate-200 text-slate-800 border-slate-400 shadow-inner"
+													: "bg-white hover:bg-slate-50 border-slate-300 shadow-sm hover:shadow-md"
 											}`}
 										>
 											<div className="text-lg">{score.label}</div>
@@ -267,21 +283,21 @@ export default function MatchResultModal({
 						<div className="flex gap-2">
 							<button
 								onClick={onClose}
-								className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-50"
+								className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-50 shadow-md hover:shadow-lg active:shadow-inner active:transform active:scale-95"
 							>
 								キャンセル
 							</button>
 							<button
 								onClick={handleResetMatch}
 								disabled={isSubmitting}
-								className="flex-1 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 disabled:opacity-50"
+								className="flex-1 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 disabled:opacity-50 shadow-md hover:shadow-lg active:shadow-inner active:transform active:scale-95"
 							>
 								{isSubmitting ? "取消中..." : "試合取消"}
 							</button>
 							<button
 								onClick={handleCompleteMatch}
 								disabled={isSubmitting || !selectedScore}
-								className="flex-1 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 disabled:opacity-50"
+								className="flex-1 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 disabled:opacity-50 shadow-md hover:shadow-lg active:shadow-inner active:transform active:scale-95"
 							>
 								{isSubmitting ? "確定中..." : "確定"}
 							</button>
@@ -311,7 +327,7 @@ export default function MatchResultModal({
 							<div className="grid grid-cols-2 gap-4">
 								{/* Player1の勝利パターン（左側） */}
 								<div className="space-y-2">
-									<div className="text-xs font-medium text-gray-600 text-center bg-blue-50 py-1 rounded">
+									<div className="text-xs font-medium text-slate-800 text-center bg-slate-100 py-1 rounded">
 										{player1.name}勝利
 									</div>
 									{player1Options.map((score) => (
@@ -320,8 +336,8 @@ export default function MatchResultModal({
 											onClick={() => handleScoreSelect(score)}
 											className={`w-full p-3 rounded border text-center font-medium transition-all ${
 												selectedScore === score.label
-													? "bg-blue-500 text-white border-blue-500"
-													: "bg-blue-50 hover:bg-blue-100 border-blue-300"
+													? "bg-slate-200 text-slate-800 border-slate-400 shadow-inner"
+													: "bg-white hover:bg-slate-50 border-slate-300 shadow-sm hover:shadow-md"
 											}`}
 										>
 											<div className="text-lg">{score.label}</div>
@@ -331,7 +347,7 @@ export default function MatchResultModal({
 
 								{/* Player2の勝利パターン（右側） */}
 								<div className="space-y-2">
-									<div className="text-xs font-medium text-gray-600 text-center bg-green-50 py-1 rounded">
+									<div className="text-xs font-medium text-slate-800 text-center bg-slate-100 py-1 rounded">
 										{player2.name}勝利
 									</div>
 									{player2Options.map((score) => (
@@ -340,8 +356,8 @@ export default function MatchResultModal({
 											onClick={() => handleScoreSelect(score)}
 											className={`w-full p-3 rounded border text-center font-medium transition-all ${
 												selectedScore === score.label
-													? "bg-green-500 text-white border-green-500"
-													: "bg-green-50 hover:bg-green-100 border-green-300"
+													? "bg-slate-200 text-slate-800 border-slate-400 shadow-inner"
+													: "bg-white hover:bg-slate-50 border-slate-300 shadow-sm hover:shadow-md"
 											}`}
 										>
 											<div className="text-lg">{score.label}</div>
@@ -354,21 +370,21 @@ export default function MatchResultModal({
 						<div className="flex gap-2">
 							<button
 								onClick={onClose}
-								className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-50"
+								className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-50 shadow-md hover:shadow-lg active:shadow-inner active:transform active:scale-95"
 							>
 								キャンセル
 							</button>
 							<button
 								onClick={handleResetMatch}
 								disabled={isSubmitting}
-								className="flex-1 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 disabled:opacity-50"
+								className="flex-1 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 disabled:opacity-50 shadow-md hover:shadow-lg active:shadow-inner active:transform active:scale-95"
 							>
 								{isSubmitting ? "取消中..." : "試合取消"}
 							</button>
 							<button
 								onClick={handleCompleteMatch}
 								disabled={isSubmitting || !selectedScore}
-								className="flex-1 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 disabled:opacity-50"
+								className="flex-1 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 disabled:opacity-50 shadow-md hover:shadow-lg active:shadow-inner active:transform active:scale-95"
 							>
 								{isSubmitting ? "更新中..." : "結果更新"}
 							</button>

@@ -457,7 +457,7 @@ function MatchCell({
 			return "bg-white border-2 border-gray-200 text-gray-500 cursor-not-allowed opacity-70 transition-all duration-150";
 		}
 
-		const clickableStyle = "bg-white shadow-md border-2 transition-all duration-150 cursor-pointer hover:shadow-lg active:shadow-inner active:transform active:translate-y-1";
+		const clickableStyle = "bg-white shadow-md border-2 transition-all duration-150 cursor-pointer hover:shadow-lg active:shadow-inner active:transform active:scale-95";
 
 		switch (match.status) {
 			case "pending":
@@ -523,6 +523,14 @@ function MatchCell({
 				<div className="flex flex-col items-center justify-center gap-1">
 					<Ban className="h-4 w-4" />
 					<div className="text-xs font-medium">試合不可</div>
+				</div>
+			);
+		}
+
+		if (match.status === "pending") {
+			return (
+				<div className="flex flex-col items-center justify-center gap-1">
+					<div className="text-xs font-medium">未対戦</div>
 				</div>
 			);
 		}
@@ -655,6 +663,7 @@ function MatchesList({
 		if (status === "playing")
 			return <Swords className="h-4 w-4 text-orange-600" />;
 		if (isDisabled) return <Ban className="h-4 w-4 text-gray-500" />;
+		if (status === "pending") return null;
 		return <Play className="h-4 w-4 text-blue-600" />;
 	};
 
@@ -672,7 +681,7 @@ function MatchesList({
 				</Badge>
 			);
 		if (isDisabled) return <Badge variant="secondary">待機中</Badge>;
-		return <Badge variant="outline">未実施</Badge>;
+		return <Badge variant="outline">未対戦</Badge>;
 	};
 
 	return (
@@ -722,7 +731,7 @@ function MatchesList({
 				return (
 					<Card
 						key={match.id}
-						className={`${isClickable ? "cursor-pointer" : ""} border-2 ${getCardStyle()}`}
+						className={`${isClickable ? "cursor-pointer hover:shadow-lg active:shadow-inner active:transform active:scale-95 transition-all duration-150" : ""} border-2 ${getCardStyle()}`}
 						onClick={() => {
 							if (isClickable && player1 && player2) {
 								onMatchClick(match, player1, player2);
@@ -736,7 +745,7 @@ function MatchesList({
 									<div className={`text-xs text-center font-medium ${getTextColor()}`}>
 										{match.status === "completed" && "試合終了"}
 										{match.status === "playing" && "試合中"}
-										{match.status === "pending" && !isDisabled && "未実施"}
+										{match.status === "pending" && !isDisabled && "未対戦"}
 										{match.status === "pending" && isDisabled && "試合不可"}
 									</div>
 								</div>
@@ -753,7 +762,7 @@ function MatchesList({
 									)}
 									{isDisabled && (
 										<div className="text-sm text-muted-foreground truncate">
-											いずれかの選手が試合中のため
+											選手が他の試合中のため
 										</div>
 									)}
 								</div>
