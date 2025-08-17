@@ -297,9 +297,9 @@ export default function LeaguePage({ params }: LeaguePageProps) {
 						/>
 					</TabsContent>
 					<TabsContent value="matches" className="space-y-4">
-						<MatchesList
-							matches={league.matches}
+						<MobileMatchCards
 							players={league.players}
+							matches={league.matches}
 							isAdmin={league.is_admin}
 							onMatchClick={(match, player1, player2) =>
 								setSelectedMatch({ match, player1, player2 })
@@ -418,6 +418,198 @@ function MatchMatrix({
 						))}
 					</tbody>
 				</table>
+			</div>
+		</div>
+	);
+}
+
+// Mobile Card Layout Component
+function MobileMatchCards({
+	players,
+	matches,
+	isAdmin,
+	onMatchClick,
+}: {
+	players: Player[];
+	matches: Match[];
+	isAdmin: boolean;
+	onMatchClick: (match: Match, player1: Player, player2: Player) => void;
+}) {
+	const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'playing' | 'completed'>('pending');
+	const [showPlayableOnly, setShowPlayableOnly] = useState(true);
+
+	const getMatch = (player1Id: string, player2Id: string) => {
+		return matches.find(
+			(m) =>
+				(m.player1_id === player1Id && m.player2_id === player2Id) ||
+				(m.player1_id === player2Id && m.player2_id === player1Id),
+		);
+	};
+
+	const isPlayerInPlayingMatch = (playerId: string) => {
+		return matches.some(
+			(m) =>
+				m.status === "playing" &&
+				(m.player1_id === playerId || m.player2_id === playerId),
+		);
+	};
+
+	// 全ての対戦組み合わせを生成
+	const allMatches = [];
+	for (let i = 0; i < players.length; i++) {
+		for (let j = i + 1; j < players.length; j++) {
+			const player1 = players[i];
+			const player2 = players[j];
+			const match = getMatch(player1.id, player2.id);
+			if (match) {
+				allMatches.push({ match, player1, player2 });
+			}
+		}
+	}
+
+	// フィルター適用
+	const filteredMatches = allMatches.filter(({ match, player1, player2 }) => {
+		// メインフィルター
+		if (filterStatus !== 'all' && match.status !== filterStatus) {
+			return false;
+		}
+		
+		// 試合可能フィルター（未対戦時のみ適用）
+		if (filterStatus === 'pending' && showPlayableOnly) {
+			const isDisabled = isPlayerInPlayingMatch(player1.id) || isPlayerInPlayingMatch(player2.id);
+			if (isDisabled) return false;
+		}
+		
+		return true;
+	});
+
+	return (
+		<div className="w-full space-y-4">
+			{/* フィルターボタン */}
+			<div className="flex flex-wrap gap-2 p-4 py-0">
+				{[
+					{ key: 'pending' as const, label: '未対戦', count: allMatches.filter(({match}) => match.status === 'pending').length },
+					{ key: 'playing' as const, label: '試合中', count: allMatches.filter(({match}) => match.status === 'playing').length },
+					{ key: 'completed' as const, label: '試合終了', count: allMatches.filter(({match}) => match.status === 'completed').length },
+					{ key: 'all' as const, label: '全て', count: allMatches.length }
+				].map(({ key, label, count }) => (
+					<button
+						key={key}
+						onClick={() => setFilterStatus(key)}
+						className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+							filterStatus === key
+								? 'bg-blue-100 text-blue-700 border border-blue-200'
+								: 'bg-gray-100 text-gray-600 border border-gray-200'
+						}`}
+					>
+						{label} ({count})
+					</button>
+				))}
+			</div>
+
+			{/* 試合可能フィルター */}
+			{filterStatus === 'pending' && (
+				<div className="px-4 pt-0">
+					<div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg border">
+						<div className="flex items-center gap-3">
+							<span className="text-sm font-medium text-gray-700">試合可能な対戦のみ表示</span>
+							<span className="text-xs text-gray-500">
+								({allMatches.filter(({match, player1, player2}) => 
+									match.status === 'pending' && 
+									!isPlayerInPlayingMatch(player1.id) && 
+									!isPlayerInPlayingMatch(player2.id)
+								).length}件)
+							</span>
+						</div>
+						
+						{/* トグルスイッチ */}
+						<button
+							onClick={() => setShowPlayableOnly(!showPlayableOnly)}
+							className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+								showPlayableOnly 
+									? 'bg-blue-600' 
+									: 'bg-gray-300'
+							}`}
+						>
+							<span
+								className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
+									showPlayableOnly 
+										? 'translate-x-6' 
+										: 'translate-x-1'
+								}`}
+							/>
+						</button>
+					</div>
+					
+				</div>
+			)}
+
+			<div className="space-y-3 px-4">
+			{filteredMatches.map(({ match, player1, player2 }) => {
+				const matchKey = `${player1.id}-${player2.id}`;
+				const isDisabled = isPlayerInPlayingMatch(player1.id) || isPlayerInPlayingMatch(player2.id);
+				const isClickable = isAdmin && !(match.status === "pending" && isDisabled);
+				
+				return (
+					<div
+						key={matchKey}
+						className={`bg-white border rounded-lg p-4 shadow-sm ${
+							isClickable ? "cursor-pointer hover:shadow-md transition-shadow" : ""
+						}`}
+						onClick={() => {
+							if (isClickable) {
+								onMatchClick(match, player1, player2);
+							}
+						}}
+					>
+						<div className="flex items-center justify-between mb-3">
+							<div className="flex items-center space-x-3">
+								<span className="font-medium text-base" title={player1.name}>{player1.name}</span>
+								<span className="text-gray-400 text-sm">vs</span>
+								<span className="font-medium text-base" title={player2.name}>{player2.name}</span>
+							</div>
+							
+							{/* 状態バッジ */}
+							<div className="flex items-center">
+								{match.status === "completed" && match.winner_id && (
+									<div className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">
+										試合終了
+									</div>
+								)}
+								{match.status === "playing" && (
+									<div className="text-xs px-2 py-1 bg-orange-100 text-orange-700 rounded-full">
+										試合中
+									</div>
+								)}
+								{match.status === "pending" && (
+									<div className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-full">
+										{isDisabled ? "試合不可" : "未対戦"}
+									</div>
+								)}
+							</div>
+						</div>
+						
+						{/* 試合結果または状態表示 */}
+						<div className="flex items-center justify-center py-3">
+							{match.status === "completed" && match.winner_id ? (
+								<div className="text-center">
+									<div className="text-lg font-bold text-gray-800">
+										{match.sets_won_player1} - {match.sets_won_player2}
+									</div>
+									<div className="text-sm text-gray-600 mt-1">
+										勝者: {match.winner_id === player1.id ? player1.name : player2.name}
+									</div>
+								</div>
+							) : (
+								<div className="text-center text-gray-500">
+									{match.status === "playing" && "試合中"}
+									{match.status === "pending" && (isDisabled ? "他の試合中のため対戦不可" : "タップして試合開始")}
+								</div>
+							)}
+						</div>
+					</div>
+				);
+			})}
 			</div>
 		</div>
 	);
@@ -639,148 +831,3 @@ function StandingsTable({ standings }: { standings: Standing[] }) {
 	);
 }
 
-// Matches List Component
-function MatchesList({
-	matches,
-	players,
-	isAdmin,
-	onMatchClick,
-}: {
-	matches: Match[];
-	players: Player[];
-	isAdmin: boolean;
-	onMatchClick: (match: Match, player1: Player, player2: Player) => void;
-}) {
-	const getPlayerName = (playerId: string) => {
-		return players.find((p) => p.id === playerId)?.name || "不明";
-	};
-
-	const getPlayer = (playerId: string) => {
-		return players.find((p) => p.id === playerId);
-	};
-
-	const isPlayerInPlayingMatch = (playerId: string) => {
-		return matches.some(
-			(m) =>
-				m.status === "playing" &&
-				(m.player1_id === playerId || m.player2_id === playerId),
-		);
-	};
-
-	const getStatusIcon = (status: string, isDisabled: boolean) => {
-		if (status === "completed")
-			return <CheckCircle className="h-4 w-4 text-green-600" />;
-		if (status === "playing")
-			return <Swords className="h-4 w-4 text-orange-600" />;
-		if (isDisabled) return <Ban className="h-4 w-4 text-gray-500" />;
-		if (status === "pending") return null;
-		return <Play className="h-4 w-4 text-blue-600" />;
-	};
-
-	const getStatusBadge = (status: string, isDisabled: boolean) => {
-		if (status === "completed")
-			return (
-				<Badge className="bg-green-100 text-green-800 hover:bg-green-100">
-					完了
-				</Badge>
-			);
-		if (status === "playing")
-			return (
-				<Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100">
-					試合中
-				</Badge>
-			);
-		if (isDisabled) return <Badge variant="secondary">待機中</Badge>;
-		return <Badge variant="outline">未対戦</Badge>;
-	};
-
-	return (
-		<div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-			{matches.map((match) => {
-				const player1 = getPlayer(match.player1_id);
-				const player2 = getPlayer(match.player2_id);
-				const isDisabled =
-					match.status === "pending" &&
-					(isPlayerInPlayingMatch(match.player1_id) ||
-						isPlayerInPlayingMatch(match.player2_id));
-				const isClickable = isAdmin && !isDisabled;
-
-				// Get border and text color based on status
-				const getCardStyle = () => {
-					if (match.status === "pending" && isDisabled) {
-						return "border-gray-200";
-					}
-					switch (match.status) {
-						case "pending":
-							return "border-blue-200";
-						case "playing":
-							return "border-orange-300";
-						case "completed":
-							return "border-gray-200";
-						default:
-							return "border-gray-200";
-					}
-				};
-
-				const getTextColor = () => {
-					if (match.status === "pending" && isDisabled) {
-						return "text-gray-500";
-					}
-					switch (match.status) {
-						case "pending":
-							return "text-blue-700";
-						case "playing":
-							return "text-orange-700";
-						case "completed":
-							return "text-gray-600";
-						default:
-							return "text-gray-500";
-					}
-				};
-
-				return (
-					<Card
-						key={match.id}
-						className={`${isClickable ? "cursor-pointer hover:shadow-lg active:shadow-inner active:transform active:scale-95 transition-all duration-150" : ""} border-2 ${getCardStyle()}`}
-						onClick={() => {
-							if (isClickable && player1 && player2) {
-								onMatchClick(match, player1, player2);
-							}
-						}}
-					>
-						<CardContent className="p-4 h-20">
-							<div className="flex items-center gap-3 h-full">
-								<div className="flex flex-col items-center justify-center gap-1 min-w-16">
-									{getStatusIcon(match.status, isDisabled)}
-									<div className={`text-xs text-center font-medium ${getTextColor()}`}>
-										{match.status === "completed" && "試合終了"}
-										{match.status === "playing" && "試合中"}
-										{match.status === "pending" && !isDisabled && "未対戦"}
-										{match.status === "pending" && isDisabled && "試合不可"}
-									</div>
-								</div>
-								<div className="flex-1 min-w-0">
-									<div className="font-medium truncate">
-										{getPlayerName(match.player1_id)} vs{" "}
-										{getPlayerName(match.player2_id)}
-									</div>
-									{match.status === "completed" && match.winner_id && (
-										<div className="text-sm text-muted-foreground truncate">
-											勝者: {getPlayerName(match.winner_id)} (
-											{match.sets_won_player1}-{match.sets_won_player2})
-										</div>
-									)}
-									{isDisabled && (
-										<div className="text-sm text-muted-foreground truncate">
-											選手が他の試合中のため
-										</div>
-									)}
-								</div>
-							</div>
-						</CardContent>
-					</Card>
-				);
-			})}
-		</div>
-	);
-}
