@@ -474,77 +474,66 @@ export default function CreateLeaguePage() {
 									description="以下の内容でリーグ戦を作成します"
 									isActive={currentStep === 3}
 								>
-									<div className="space-y-4">
+									<div className="bg-gray-50 rounded-lg p-6 space-y-6">
 										{/* リーグ戦名 */}
-										<div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-											<div className="flex justify-between items-start gap-4">
-												<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
-													リーグ戦名
-												</div>
-												<div className="text-right font-medium text-gray-900 min-w-0">
-													{watchedValues.name || "（未入力）"}
-												</div>
+										<div className="flex justify-between items-start gap-4 py-3 border-b border-gray-200">
+											<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
+												リーグ戦名
+											</div>
+											<div className="text-right font-medium text-gray-900 min-w-0">
+												{watchedValues.name || "（未入力）"}
 											</div>
 										</div>
-
 										{/* 説明 */}
 										{watchedValues.description && (
-											<div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-												<div className="flex justify-between items-start gap-4">
-													<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
-														説明
-													</div>
-													<div className="text-right text-gray-900 min-w-0">
-														{watchedValues.description}
-													</div>
+											<div className="flex justify-between items-start gap-4 py-3 border-b border-gray-200">
+												<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
+													説明
+												</div>
+												<div className="text-right text-gray-900 min-w-0">
+													{watchedValues.description}
 												</div>
 											</div>
 										)}
 
 										{/* 選手一覧 */}
-										<div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-											<div className="space-y-3">
-												<div className="text-sm font-medium text-gray-600">
-													選手一覧
-												</div>
-												<div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-													{participants
-														.filter((p) => p.trim())
-														.map((participant, index) => (
-															<div
-																key={index}
-																className="bg-gray-50 rounded px-3 py-2 text-sm text-gray-900 border"
-															>
-																{index + 1}. {participant}
-															</div>
-														))}
-												</div>
+										<div className="py-3 border-b border-gray-200">
+											<div className="text-sm font-medium text-gray-600 mb-3">
+												選手一覧
 											</div>
-										</div>
-
-										{/* 試合形式 */}
-										<div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-											<div className="flex justify-between items-start gap-4">
-												<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
-													試合形式
-												</div>
-												<div className="text-right font-medium text-gray-900 min-w-0">
-													{formatMatchFormat(
-														watchedValues.match_format || "5_game",
-													)}
-												</div>
+											<div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+												{participants
+													.filter((p) => p.trim())
+													.map((participant, index) => (
+														<div
+															key={index}
+															className="bg-white rounded px-3 py-2 text-sm text-gray-900"
+														>
+															{index + 1}. {participant}
+														</div>
+													))}
 											</div>
 										</div>
 
 										{/* 台数 */}
-										<div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-											<div className="flex justify-between items-start gap-4">
-												<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
-													台数
-												</div>
-												<div className="text-right font-medium text-gray-900 min-w-0">
-													{watchedValues.table_count}台
-												</div>
+										<div className="flex justify-between items-start gap-4 py-3 border-b border-gray-200">
+											<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
+												台数
+											</div>
+											<div className="text-right font-medium text-gray-900 min-w-0">
+												{watchedValues.table_count}台
+											</div>
+										</div>
+
+										{/* 試合形式 */}
+										<div className="flex justify-between items-start gap-4 py-3">
+											<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
+												試合形式
+											</div>
+											<div className="text-right font-medium text-gray-900 min-w-0">
+												{formatMatchFormat(
+													watchedValues.match_format || "5_game",
+												)}
 											</div>
 										</div>
 									</div>

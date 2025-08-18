@@ -7,10 +7,21 @@ compatibility_flags = ["nodejs_compat"]
 [env.production]
 name = "rakuraku-league"
 
-[[d1_databases]]
+# 開発環境
+[env.dev]
+name = "rakuraku-league-dev-db"
+[[env.dev.d1_databases]]
 binding = "DB"
-database_name = "rakuraku-league-db"
-database_id = ""  # Will be set after database creation
+database_name = "rakuraku-league-dev-db"
+database_id = "2f5de7ef-949e-4733-9e69-ed26cf5a622c"
+
+# 本番環境
+[env.prod]
+name = "rakuraku-league-prod-db"
+[[env.prod.d1_databases]]
+binding = "DB"
+database_name = "rakuraku-league-prod-db"
+database_id = "3d244d02-d4c4-42c8-a526-31d0fc75c1b1"
 
 [[d1_databases.migrations_dir]]
 migrations_dir = "./migrations"

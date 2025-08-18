@@ -603,12 +603,12 @@ function MobileMatchCards({
 							{/* 状態バッジ */}
 							<div className="flex items-center">
 								{match.status === "completed" && match.winner_id && (
-									<div className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">
+									<div className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
 										試合終了
 									</div>
 								)}
 								{match.status === "playing" && (
-									<div className="text-xs px-2 py-1 bg-orange-100 text-orange-700 rounded-full">
+									<div className="text-xs px-2 py-1 bg-amber-100 text-amber-700 rounded-full">
 										試合中
 									</div>
 								)}
@@ -700,7 +700,7 @@ function MatchCell({
 
 		switch (match.status) {
 			case "pending":
-				return `${clickableStyle} border-blue-200 hover:border-blue-300 text-blue-700`;
+				return `${clickableStyle} border-slate-200 hover:border-slate-300 text-slate-700`;
 			case "playing":
 				return `${clickableStyle} border-orange-300 hover:border-orange-400 text-orange-700`;
 			case "completed":
