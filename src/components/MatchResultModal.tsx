@@ -196,7 +196,11 @@ export default function MatchResultModal({
 									return (
 										<button
 											key={table.id}
-											onClick={() => isAvailable && !isSubmitting && handleTableSelect(table.id)}
+											onClick={() =>
+												isAvailable &&
+												!isSubmitting &&
+												handleTableSelect(table.id)
+											}
 											disabled={!isAvailable || isSubmitting}
 											className={`p-4 h-20 text-center rounded-lg border-2 transition-all duration-150 flex flex-col justify-center items-center ${
 												isAvailable
@@ -204,15 +208,15 @@ export default function MatchResultModal({
 													: "bg-gray-100 border-gray-200 shadow-sm opacity-60 cursor-not-allowed"
 											}`}
 										>
-											<div className={`font-semibold text-lg ${
-												isAvailable ? "text-blue-700" : "text-gray-500"
-											}`}>
+											<div
+												className={`font-semibold text-lg ${
+													isAvailable ? "text-blue-700" : "text-gray-500"
+												}`}
+											>
 												{table.table_number}番台
 											</div>
 											{!isAvailable && (
-												<div className="text-sm text-gray-400 mt-1">
-													使用中
-												</div>
+												<div className="text-sm text-gray-400 mt-1">使用中</div>
 											)}
 										</button>
 									);
@@ -297,7 +301,7 @@ export default function MatchResultModal({
 							<button
 								onClick={handleCompleteMatch}
 								disabled={isSubmitting || !selectedScore}
-								className={`flex-1 bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 disabled:opacity-50 shadow-md hover:shadow-lg ${!(isSubmitting || !selectedScore) ? 'active:shadow-inner active:transform active:scale-95' : ''}`}
+								className={`flex-1 bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 disabled:opacity-50 shadow-md hover:shadow-lg ${!(isSubmitting || !selectedScore) ? "active:shadow-inner active:transform active:scale-95" : ""}`}
 							>
 								{isSubmitting ? "確定中..." : "確定"}
 							</button>
@@ -384,7 +388,7 @@ export default function MatchResultModal({
 							<button
 								onClick={handleCompleteMatch}
 								disabled={isSubmitting || !selectedScore}
-								className={`flex-1 bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 disabled:opacity-50 shadow-md hover:shadow-lg ${!(isSubmitting || !selectedScore) ? 'active:shadow-inner active:transform active:scale-95' : ''}`}
+								className={`flex-1 bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 disabled:opacity-50 shadow-md hover:shadow-lg ${!(isSubmitting || !selectedScore) ? "active:shadow-inner active:transform active:scale-95" : ""}`}
 							>
 								{isSubmitting ? "更新中..." : "結果更新"}
 							</button>

@@ -1,9 +1,8 @@
 "use client";
 
-import { Plus, Users, Building, Target, CheckCircle, PlayCircle, Share, Edit } from "lucide-react";
 import Link from "next/link";
 
-import ThreeBackground from '../components/ThreeBackground';
+import ThreeBackground from "../components/ThreeBackground";
 
 export default function HomePage() {
 	return (
@@ -31,7 +30,7 @@ export default function HomePage() {
 							{/* Device Mockups Container */}
 							<div className="relative">
 								{/* Mobile Layout - Stacked mockups (below 550px) */}
-								<div className="sm:hidden max-w-md mx-auto h-80">
+								<div className="sm:hidden max-w-md mx-auto h-60 sm:h-80">
 									{/* PC Mockup (Background) */}
 									<div className="absolute left-4 top-0 transform rotate-2 z-10">
 										<div className="neumorphism shadow-2xl">
@@ -98,7 +97,7 @@ export default function HomePage() {
 					</section>
 					
 					{/* Hero Section */}
-					<section className="text-center mb-12 md:mb-20">
+					{/* <section className="text-center mb-12 md:mb-20">
 						<div className="max-w-4xl mx-auto">
 							<div className="neumorphism p-4 md:p-8 mb-8 md:mb-12 float-animation">
 								<h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">
@@ -129,7 +128,7 @@ export default function HomePage() {
 								</div>
 							</div>
 						</div>
-					</section>
+					</section> */}
 					
 					{/* Demo Video Section */}
 					<section className="mb-12 md:mb-20">
@@ -168,15 +167,15 @@ export default function HomePage() {
 								</div>
 								
 								<div className="feature-card neumorphism p-4 md:p-6 text-center">
-									<i className="fas fa-mobile-alt text-3xl text-orange-500 mb-4"></i>
-									<h3 className="font-semibold text-lg mb-3">直感的操作</h3>
-									<p className="text-gray-600">スマートフォンでも操作しやすい</p>
+									<i className="fas fa-share-alt text-3xl text-orange-500 mb-4"></i>
+									<h3 className="font-semibold text-lg mb-3">URL共有</h3>
+									<p className="text-gray-600">URLを送るだけで参加者に簡単共有</p>
 								</div>
 								
 								<div className="feature-card neumorphism p-4 md:p-6 text-center">
 									<i className="fas fa-sync-alt text-3xl text-orange-500 mb-4"></i>
-									<h3 className="font-semibold text-lg mb-3">リアルタイム</h3>
-									<p className="text-gray-600">結果入力と同時に全員に反映</p>
+									<h3 className="font-semibold text-lg mb-3">リアルタイム更新</h3>
+									<p className="text-gray-600">結果入力と同時に全員の画面に反映</p>
 								</div>
 								
 								<div className="feature-card neumorphism p-4 md:p-6 text-center">

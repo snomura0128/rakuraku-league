@@ -358,14 +358,14 @@ function MatchMatrix({
 		);
 	};
 
-	const [cellSizes, setCellSizes] = useState({ 
-		leftCol: 100, 
-		cellCol: 80, 
-		cellHeight: 80, 
-		fontSize: 'text-sm',
-		padding: 'p-2'
+	const [cellSizes, setCellSizes] = useState({
+		leftCol: 100,
+		cellCol: 80,
+		cellHeight: 80,
+		fontSize: "text-sm",
+		padding: "p-2",
 	});
-	
+
 	useEffect(() => {
 		const updateSizes = () => {
 			const isMobile = window.innerWidth < 768;
@@ -373,44 +373,57 @@ function MatchMatrix({
 				leftCol: isMobile ? 80 : 100,
 				cellCol: isMobile ? 70 : 80,
 				cellHeight: isMobile ? 60 : 80,
-				fontSize: isMobile ? 'text-xs' : 'text-sm',
-				padding: isMobile ? 'p-1' : 'p-2'
+				fontSize: isMobile ? "text-xs" : "text-sm",
+				padding: isMobile ? "p-1" : "p-2",
 			});
 		};
-		
+
 		updateSizes();
-		window.addEventListener('resize', updateSizes);
-		return () => window.removeEventListener('resize', updateSizes);
+		window.addEventListener("resize", updateSizes);
+		return () => window.removeEventListener("resize", updateSizes);
 	}, []);
 
 	return (
 		<div className="w-full">
 			<div
 				className="overflow-auto border rounded-lg mx-auto"
-				style={{ 
-					maxHeight: "70vh", 
+				style={{
+					maxHeight: "70vh",
 					width: `${cellSizes.leftCol + cellSizes.cellCol * players.length}px`,
-					maxWidth: "100%"
+					maxWidth: "100%",
 				}}
 			>
-				<table className="relative border-collapse table-fixed" style={{ 
-				width: `${cellSizes.leftCol + cellSizes.cellCol * players.length}px`
-			}}>
+				<table
+					className="relative border-collapse table-fixed"
+					style={{
+						width: `${cellSizes.leftCol + cellSizes.cellCol * players.length}px`,
+					}}
+				>
 					<colgroup>
 						<col style={{ width: `${cellSizes.leftCol}px` }} />
 						{players.map((player) => (
-							<col key={player.id} style={{ width: `${cellSizes.cellCol}px` }} />
+							<col
+								key={player.id}
+								style={{ width: `${cellSizes.cellCol}px` }}
+							/>
 						))}
 					</colgroup>
 					<thead className="sticky top-0 z-20 bg-white">
 						<tr>
-							<th className={`font-semibold bg-white border-b border-r sticky left-0 z-30 ${cellSizes.padding} text-left min-w-20`}></th>
+							<th
+								className={`font-semibold bg-white border-b border-r sticky left-0 z-30 ${cellSizes.padding} text-left min-w-20`}
+							></th>
 							{players.map((player) => (
 								<th
 									key={player.id}
 									className="text-center min-w-20 bg-white border-b z-20 p-1 font-semibold"
 								>
-									<div className={`px-2 ${cellSizes.fontSize} leading-tight line-clamp-2`} title={player.name}>{player.name}</div>
+									<div
+										className={`px-2 ${cellSizes.fontSize} leading-tight line-clamp-2`}
+										title={player.name}
+									>
+										{player.name}
+									</div>
 								</th>
 							))}
 						</tr>
@@ -419,12 +432,20 @@ function MatchMatrix({
 						{players.map((player1) => (
 							<tr key={player1.id}>
 								<td className="font-semibold bg-white sticky left-0 border-r z-10 min-w-20 p-1">
-									<div className={`px-2 ${cellSizes.fontSize} leading-tight line-clamp-2`} title={player1.name}>{player1.name}</div>
+									<div
+										className={`px-2 ${cellSizes.fontSize} leading-tight line-clamp-2`}
+										title={player1.name}
+									>
+										{player1.name}
+									</div>
 								</td>
 								{players.map((player2) => (
 									<td key={player2.id} className="p-0.5 text-center">
 										{player1.id === player2.id ? (
-											<div className="w-full bg-muted/50 rounded-lg flex items-center justify-center" style={{ height: `${cellSizes.cellHeight}px` }}>
+											<div
+												className="w-full bg-muted/50 rounded-lg flex items-center justify-center"
+												style={{ height: `${cellSizes.cellHeight}px` }}
+											>
 												<span className="text-muted-foreground text-lg">-</span>
 											</div>
 										) : (
@@ -466,7 +487,9 @@ function MobileMatchCards({
 	tables: any[];
 	onMatchClick: (match: Match, player1: Player, player2: Player) => void;
 }) {
-	const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'playing' | 'completed'>('pending');
+	const [filterStatus, setFilterStatus] = useState<
+		"all" | "pending" | "playing" | "completed"
+	>("pending");
 	const [showPlayableOnly, setShowPlayableOnly] = useState(true);
 
 	const getMatch = (player1Id: string, player2Id: string) => {
@@ -501,16 +524,18 @@ function MobileMatchCards({
 	// フィルター適用
 	const filteredMatches = allMatches.filter(({ match, player1, player2 }) => {
 		// メインフィルター
-		if (filterStatus !== 'all' && match.status !== filterStatus) {
+		if (filterStatus !== "all" && match.status !== filterStatus) {
 			return false;
 		}
-		
+
 		// 試合可能フィルター（未対戦時のみ適用）
-		if (filterStatus === 'pending' && showPlayableOnly) {
-			const isDisabled = isPlayerInPlayingMatch(player1.id) || isPlayerInPlayingMatch(player2.id);
+		if (filterStatus === "pending" && showPlayableOnly) {
+			const isDisabled =
+				isPlayerInPlayingMatch(player1.id) ||
+				isPlayerInPlayingMatch(player2.id);
 			if (isDisabled) return false;
 		}
-		
+
 		return true;
 	});
 
@@ -519,18 +544,34 @@ function MobileMatchCards({
 			{/* フィルターボタン */}
 			<div className="flex flex-wrap gap-2 p-4 py-0">
 				{[
-					{ key: 'pending' as const, label: '未対戦', count: allMatches.filter(({match}) => match.status === 'pending').length },
-					{ key: 'playing' as const, label: '試合中', count: allMatches.filter(({match}) => match.status === 'playing').length },
-					{ key: 'completed' as const, label: '試合終了', count: allMatches.filter(({match}) => match.status === 'completed').length },
-					{ key: 'all' as const, label: '全て', count: allMatches.length }
+					{
+						key: "pending" as const,
+						label: "未対戦",
+						count: allMatches.filter(({ match }) => match.status === "pending")
+							.length,
+					},
+					{
+						key: "playing" as const,
+						label: "試合中",
+						count: allMatches.filter(({ match }) => match.status === "playing")
+							.length,
+					},
+					{
+						key: "completed" as const,
+						label: "試合終了",
+						count: allMatches.filter(
+							({ match }) => match.status === "completed",
+						).length,
+					},
+					{ key: "all" as const, label: "全て", count: allMatches.length },
 				].map(({ key, label, count }) => (
 					<button
 						key={key}
 						onClick={() => setFilterStatus(key)}
 						className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
 							filterStatus === key
-								? 'bg-blue-100 text-blue-700 border border-blue-200'
-								: 'bg-gray-100 text-gray-600 border border-gray-200'
+								? "bg-blue-100 text-blue-700 border border-blue-200"
+								: "bg-gray-100 text-gray-600 border border-gray-200"
 						}`}
 					>
 						{label} ({count})
@@ -539,112 +580,128 @@ function MobileMatchCards({
 			</div>
 
 			{/* 試合可能フィルター */}
-			{filterStatus === 'pending' && (
+			{filterStatus === "pending" && (
 				<div className="px-4 pt-0">
 					<div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg border">
 						<div className="flex items-center gap-3">
-							<span className="text-sm font-medium text-gray-700">試合可能な対戦のみ表示</span>
+							<span className="text-sm font-medium text-gray-700">
+								試合可能な対戦のみ表示
+							</span>
 							<span className="text-xs text-gray-500">
-								({allMatches.filter(({match, player1, player2}) => 
-									match.status === 'pending' && 
-									!isPlayerInPlayingMatch(player1.id) && 
-									!isPlayerInPlayingMatch(player2.id)
-								).length}件)
+								(
+								{
+									allMatches.filter(
+										({ match, player1, player2 }) =>
+											match.status === "pending" &&
+											!isPlayerInPlayingMatch(player1.id) &&
+											!isPlayerInPlayingMatch(player2.id),
+									).length
+								}
+								件)
 							</span>
 						</div>
-						
+
 						{/* トグルスイッチ */}
 						<button
 							onClick={() => setShowPlayableOnly(!showPlayableOnly)}
 							className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-								showPlayableOnly 
-									? 'bg-blue-600' 
-									: 'bg-gray-300'
+								showPlayableOnly ? "bg-blue-600" : "bg-gray-300"
 							}`}
 						>
 							<span
 								className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
-									showPlayableOnly 
-										? 'translate-x-6' 
-										: 'translate-x-1'
+									showPlayableOnly ? "translate-x-6" : "translate-x-1"
 								}`}
 							/>
 						</button>
 					</div>
-					
 				</div>
 			)}
 
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-3 px-4">
-			{filteredMatches.map(({ match, player1, player2 }) => {
-				const matchKey = `${player1.id}-${player2.id}`;
-				const isDisabled = isPlayerInPlayingMatch(player1.id) || isPlayerInPlayingMatch(player2.id);
-				const isClickable = isAdmin && !(match.status === "pending" && isDisabled);
-				
-				return (
-					<div
-						key={matchKey}
-						className={`bg-white border rounded-lg p-4 ${
-							isClickable ? "shadow-md cursor-pointer hover:shadow-lg active:shadow-inner active:transform active:scale-95 transition-all duration-150" : "shadow-sm"
-						}`}
-						onClick={() => {
-							if (isClickable) {
-								onMatchClick(match, player1, player2);
-							}
-						}}
-					>
-						<div className="flex items-center justify-between mb-3">
-							<div className="flex items-center space-x-3">
-								<span className="font-medium text-base" title={player1.name}>{player1.name}</span>
-								<span className="text-gray-400 text-sm">vs</span>
-								<span className="font-medium text-base" title={player2.name}>{player2.name}</span>
-							</div>
-							
-							{/* 状態バッジ */}
-							<div className="flex items-center">
-								{match.status === "completed" && match.winner_id && (
-									<div className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
-										試合終了
-									</div>
-								)}
-								{match.status === "playing" && (
-									<div className="text-xs px-2 py-1 bg-amber-100 text-amber-700 rounded-full">
-										試合中
-									</div>
-								)}
-								{match.status === "pending" && (
-									<div className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-full">
-										{isDisabled ? "試合不可" : "未対戦"}
-									</div>
-								)}
-							</div>
-						</div>
-						
-						{/* 試合結果または状態表示 */}
-						<div className="flex items-center justify-center py-3">
-							{match.status === "completed" && match.winner_id ? (
-								<div className="text-center">
-									<div className="text-lg font-bold text-gray-800">
-										{match.sets_won_player1} - {match.sets_won_player2}
-									</div>
-									<div className="text-sm text-gray-600 mt-1">
-										勝者: {match.winner_id === player1.id ? player1.name : player2.name}
-									</div>
+				{filteredMatches.map(({ match, player1, player2 }) => {
+					const matchKey = `${player1.id}-${player2.id}`;
+					const isDisabled =
+						isPlayerInPlayingMatch(player1.id) ||
+						isPlayerInPlayingMatch(player2.id);
+					const isClickable =
+						isAdmin && !(match.status === "pending" && isDisabled);
+
+					return (
+						<div
+							key={matchKey}
+							className={`bg-white border rounded-lg p-4 ${
+								isClickable
+									? "shadow-md cursor-pointer hover:shadow-lg active:shadow-inner active:transform active:scale-95 transition-all duration-150"
+									: "shadow-sm"
+							}`}
+							onClick={() => {
+								if (isClickable) {
+									onMatchClick(match, player1, player2);
+								}
+							}}
+						>
+							<div className="flex items-center justify-between mb-3">
+								<div className="flex items-center space-x-3">
+									<span className="font-medium text-base" title={player1.name}>
+										{player1.name}
+									</span>
+									<span className="text-gray-400 text-sm">vs</span>
+									<span className="font-medium text-base" title={player2.name}>
+										{player2.name}
+									</span>
 								</div>
-							) : (
-								<div className="text-center text-gray-500">
-									{match.status === "playing" && (
-										match.table_id 
-											? `${tables.find(t => t.id === match.table_id)?.table_number || ''}番台で試合中`
-											: '試合中'
+
+								{/* 状態バッジ */}
+								<div className="flex items-center">
+									{match.status === "completed" && match.winner_id && (
+										<div className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+											試合終了
+										</div>
 									)}
-									{match.status === "pending" && (isDisabled ? "他の試合中のため対戦不可" : "タップして試合開始")}
+									{match.status === "playing" && (
+										<div className="text-xs px-2 py-1 bg-amber-100 text-amber-700 rounded-full">
+											試合中
+										</div>
+									)}
+									{match.status === "pending" && (
+										<div className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-full">
+											{isDisabled ? "試合不可" : "未対戦"}
+										</div>
+									)}
 								</div>
-							)}
+							</div>
+
+							{/* 試合結果または状態表示 */}
+							<div className="flex items-center justify-center py-3">
+								{match.status === "completed" && match.winner_id ? (
+									<div className="text-center">
+										<div className="text-lg font-bold text-gray-800">
+											{match.sets_won_player1} - {match.sets_won_player2}
+										</div>
+										<div className="text-sm text-gray-600 mt-1">
+											勝者:{" "}
+											{match.winner_id === player1.id
+												? player1.name
+												: player2.name}
+										</div>
+									</div>
+								) : (
+									<div className="text-center text-gray-500">
+										{match.status === "playing" &&
+											(match.table_id
+												? `${tables.find((t) => t.id === match.table_id)?.table_number || ""}番台で試合中`
+												: "試合中")}
+										{match.status === "pending" &&
+											(isDisabled
+												? "他の試合中のため対戦不可"
+												: "タップして試合開始")}
+									</div>
+								)}
+							</div>
 						</div>
-					</div>
-				);
-			})}
+					);
+				})}
 			</div>
 		</div>
 	);
@@ -696,7 +753,8 @@ function MatchCell({
 			return "bg-white border-2 border-gray-200 text-gray-500 cursor-not-allowed opacity-70 transition-all duration-150";
 		}
 
-		const clickableStyle = "bg-white shadow-md border-2 transition-all duration-150 cursor-pointer hover:shadow-lg active:shadow-inner active:transform active:scale-95";
+		const clickableStyle =
+			"bg-white shadow-md border-2 transition-all duration-150 cursor-pointer hover:shadow-lg active:shadow-inner active:transform active:scale-95";
 
 		switch (match.status) {
 			case "pending":
@@ -868,4 +926,3 @@ function StandingsTable({ standings }: { standings: Standing[] }) {
 		</Card>
 	);
 }
-

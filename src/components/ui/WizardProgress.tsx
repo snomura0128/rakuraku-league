@@ -28,7 +28,8 @@ export function WizardProgress({ steps, className }: WizardProgressProps) {
 						className={cn(
 							"w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm mb-2 transition-all duration-300 relative z-10",
 							{
-								"bg-white text-orange-600 border-2 border-orange-500": step.status === "completed",
+								"bg-white text-orange-600 border-2 border-orange-500":
+									step.status === "completed",
 								"bg-primary text-primary-foreground shadow-lg ring-4 ring-primary/20":
 									step.status === "active",
 								"bg-muted text-muted-foreground border-2 border-border":

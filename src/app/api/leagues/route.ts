@@ -11,7 +11,7 @@ const createLeagueSchema = z.object({
 	table_count: z.number().min(1).max(10),
 	match_format: z.enum(["1_game", "3_game", "5_game"]),
 	participants: z.array(z.string().min(1).max(50)).min(3).max(15),
-});;
+});
 
 export async function POST(request: NextRequest) {
 	try {
