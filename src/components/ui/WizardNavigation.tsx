@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Button } from "./button";
+import { Button } from "./Button";
 
 interface WizardNavigationProps {
 	currentStep: number;

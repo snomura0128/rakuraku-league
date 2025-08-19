@@ -4,7 +4,8 @@
 	"private": true,
 	"scripts": {
 		"dev": "next dev",
-		"build": "npx @cloudflare/next-on-pages@1",
+		"build": "next build",
+		"build:cf": "npx @cloudflare/next-on-pages@1",
 		"start": "next start",
 		"lint": "next lint",
 		"biome:check": "biome check .",
@@ -14,7 +15,7 @@
 		"db:studio": "drizzle-kit studio",
 		"db:init": "tsx scripts/init-db.ts",
 		"wrangler": "wrangler",
-		"deploy": "npm run build && wrangler pages deploy .vercel/output/static"
+		"deploy": "npm run build:cf && wrangler pages deploy .vercel/output/static"
 	},
 	"dependencies": {
 		"@cloudflare/d1": "^1.4.1",

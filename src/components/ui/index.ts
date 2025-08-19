@@ -1,5 +1,5 @@
 export { Badge } from "./badge";
-export { Button } from "./button";
+export { Button } from "./Button";
 export {
 	Card,
 	CardContent,
@@ -7,7 +7,7 @@ export {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "./card";
+} from "./Card";
 export {
 	Dialog,
 	DialogContent,
@@ -17,7 +17,7 @@ export {
 	DialogTitle,
 	DialogTrigger,
 } from "./dialog";
-export { Input } from "./input";
+export { Input } from "./Input";
 export { Label } from "./label";
 export { Modal } from "./Modal";
 export {
