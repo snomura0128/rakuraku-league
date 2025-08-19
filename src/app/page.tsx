@@ -142,8 +142,7 @@ export default function HomePage() {
 									<div className="text-center">
 										<i className="fas fa-play-circle text-6xl text-orange-500 mb-4"></i>
 										<h3 className="text-xl font-semibold text-gray-700 mb-2">デモ動画</h3>
-										<p className="text-gray-500">3分でわかる簡単操作</p>
-									</div>
+										<p className="text-gray-500">近日公開予定</p>									</div>
 									
 									{/* Video placeholder overlay */}
 									<div className="absolute inset-0 bg-gradient-to-br from-orange-100 to-orange-50 opacity-30"></div>
