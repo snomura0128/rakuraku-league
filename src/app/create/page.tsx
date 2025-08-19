@@ -42,19 +42,19 @@ const createLeagueSchema = z.object({
 		.array(
 			z
 				.string()
-				.min(1, "参加者名は必須です")
-				.max(50, "参加者名は50文字以内で入力してください"),
+				.min(1, "選手名は必須です")
+				.max(50, "選手名は50文字以内で入力してください"),
 		)
-		.min(3, "最低3名の参加者が必要です")
-		.max(20, "参加者は20名以下で入力してください"),
+		.min(3, "最低3名の選手が必要です")
+		.max(15, "選手は15名以下で入力してください"),
 });
 
 type CreateLeagueForm = z.infer<typeof createLeagueSchema>;
 
 const WIZARD_STEPS = [
 	{ id: "basic", title: "基本情報" },
+	{ id: "participants", title: "選手" },
 	{ id: "settings", title: "試合設定" },
-	{ id: "participants", title: "参加者" },
 	{ id: "confirm", title: "確認" },
 ];
 
@@ -102,10 +102,10 @@ export default function CreateLeaguePage() {
 		switch (currentStep) {
 			case 0: // Basic Info
 				return await trigger(["name", "description"]);
-			case 1: // Settings
-				return await trigger(["table_count", "match_format"]);
-			case 2: // Participants
+			case 1: // Participants
 				return await trigger(["participants"]);
+			case 2: // Settings
+				return await trigger(["table_count", "match_format"]);
 			case 3: // Confirm
 				return true;
 			default:
@@ -130,7 +130,7 @@ export default function CreateLeaguePage() {
 
 	// Add participant field
 	const addParticipant = () => {
-		if (participants.length < 20) {
+		if (participants.length < 15) {
 			const newParticipants = [...participants, ""];
 			setParticipants(newParticipants);
 			setValue("participants", newParticipants);
@@ -152,7 +152,6 @@ export default function CreateLeaguePage() {
 		newParticipants[index] = value;
 		setParticipants(newParticipants);
 		setValue("participants", newParticipants);
-		trigger("participants");
 	};
 
 	const onSubmit = async () => {
@@ -264,11 +263,11 @@ export default function CreateLeaguePage() {
 									</div>
 								</WizardStep>
 
-								{/* Step 2: Settings */}
+								{/* Step 3: Settings */}
 								<WizardStep
 									title="試合設定"
 									description="台数と試合形式を選択してください"
-									isActive={currentStep === 1}
+									isActive={currentStep === 2}
 								>
 									<div className="space-y-6">
 										<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -375,11 +374,11 @@ export default function CreateLeaguePage() {
 									</div>
 								</WizardStep>
 
-								{/* Step 3: Participants */}
+								{/* Step 2: Participants */}
 								<WizardStep
-									title="参加者"
-									description="参加者の名前を入力してください（最低3名、最大20名）"
-									isActive={currentStep === 2}
+									title="選手"
+									description="選手の名前を入力してください（最低3名、最大15名）"
+									isActive={currentStep === 1}
 								>
 									<div className="space-y-4">
 										<div className="space-y-3">
@@ -390,7 +389,7 @@ export default function CreateLeaguePage() {
 													</div>
 													<div className="flex-1">
 														<Input
-															placeholder={`参加者 ${index + 1}`}
+															placeholder={`選手 ${index + 1}`}
 															value={participant}
 															onChange={(e) =>
 																updateParticipant(index, e.target.value)
@@ -429,7 +428,7 @@ export default function CreateLeaguePage() {
 											))}
 										</div>
 
-										{participants.length < 20 && (
+										{participants.length < 15 && (
 											<Button
 												type="button"
 												variant="outline"
@@ -450,7 +449,7 @@ export default function CreateLeaguePage() {
 															d="M12 6v6m0 0v6m0-6h6m-6 0H6"
 														/>
 													</svg>
-													参加者を追加
+													選手を追加
 												</span>
 											</Button>
 										)}
@@ -464,7 +463,7 @@ export default function CreateLeaguePage() {
 
 										<div className="text-sm text-text-tertiary">
 											現在 {participants.filter((p) => p.trim()).length}名 /
-											最大20名
+											最大15名
 										</div>
 									</div>
 								</WizardStep>
@@ -475,86 +474,66 @@ export default function CreateLeaguePage() {
 									description="以下の内容でリーグ戦を作成します"
 									isActive={currentStep === 3}
 								>
-									<div className="space-y-6">
-										<div className="bg-background-secondary rounded-lg p-6 space-y-4">
-											<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-												<div>
-													<h4 className="font-medium text-text-primary mb-1">
-														リーグ戦名
-													</h4>
-													<p className="text-text-secondary">
-														{watchedValues.name || "（未入力）"}
-													</p>
+									<div className="bg-gray-50 rounded-lg p-6 space-y-6">
+										{/* リーグ戦名 */}
+										<div className="flex justify-between items-start gap-4 py-3 border-b border-gray-200">
+											<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
+												リーグ戦名
+											</div>
+											<div className="text-right font-medium text-gray-900 min-w-0">
+												{watchedValues.name || "（未入力）"}
+											</div>
+										</div>
+										{/* 説明 */}
+										{watchedValues.description && (
+											<div className="flex justify-between items-start gap-4 py-3 border-b border-gray-200">
+												<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
+													説明
 												</div>
-												<div>
-													<h4 className="font-medium text-text-primary mb-1">
-														台数
-													</h4>
-													<p className="text-text-secondary">
-														{watchedValues.table_count}台
-													</p>
-												</div>
-												<div>
-													<h4 className="font-medium text-text-primary mb-1">
-														試合形式
-													</h4>
-													<p className="text-text-secondary">
-														{formatMatchFormat(
-															watchedValues.match_format || "5_game",
-														)}
-													</p>
-												</div>
-												<div>
-													<h4 className="font-medium text-text-primary mb-1">
-														参加者数
-													</h4>
-													<p className="text-text-secondary">
-														{participants.filter((p) => p.trim()).length}名
-													</p>
+												<div className="text-right text-gray-900 min-w-0">
+													{watchedValues.description}
 												</div>
 											</div>
+										)}
 
-											{watchedValues.description && (
-												<div>
-													<h4 className="font-medium text-text-primary mb-1">
-														説明
-													</h4>
-													<p className="text-text-secondary">
-														{watchedValues.description}
-													</p>
-												</div>
-											)}
-
-											<div>
-												<h4 className="font-medium text-text-primary mb-2">
-													参加者一覧
-												</h4>
-												<div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-													{participants
-														.filter((p) => p.trim())
-														.map((participant, index) => (
-															<div
-																key={index}
-																className="bg-white rounded px-3 py-2 text-sm"
-															>
-																{index + 1}. {participant}
-															</div>
-														))}
-												</div>
+										{/* 選手一覧 */}
+										<div className="py-3 border-b border-gray-200">
+											<div className="text-sm font-medium text-gray-600 mb-3">
+												選手一覧
 											</div>
+											<div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+												{participants
+													.filter((p) => p.trim())
+													.map((participant, index) => (
+														<div
+															key={index}
+															className="bg-white rounded px-3 py-2 text-sm text-gray-900"
+														>
+															{index + 1}. {participant}
+														</div>
+													))}
+											</div>
+										</div>
 
-											<div>
-												<h4 className="font-medium text-text-primary mb-1">
-													試合数
-												</h4>
-												<p className="text-text-secondary">
-													{(() => {
-														const count = participants.filter((p) =>
-															p.trim(),
-														).length;
-														return count >= 2 ? (count * (count - 1)) / 2 : 0;
-													})()}試合（総当たり戦）
-												</p>
+										{/* 台数 */}
+										<div className="flex justify-between items-start gap-4 py-3 border-b border-gray-200">
+											<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
+												台数
+											</div>
+											<div className="text-right font-medium text-gray-900 min-w-0">
+												{watchedValues.table_count}台
+											</div>
+										</div>
+
+										{/* 試合形式 */}
+										<div className="flex justify-between items-start gap-4 py-3">
+											<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
+												試合形式
+											</div>
+											<div className="text-right font-medium text-gray-900 min-w-0">
+												{formatMatchFormat(
+													watchedValues.match_format || "5_game",
+												)}
 											</div>
 										</div>
 									</div>
