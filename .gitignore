@@ -39,6 +39,7 @@ next-env.d.ts
 .wrangler/
 wrangler.toml
 wrangler.toml.backup
+wrangler.worker.toml
 
 # database
 *.db

@@ -21,6 +21,7 @@ import {
 	WizardStep,
 } from "@/components/ui";
 import { formatMatchFormat } from "@/lib/utils";
+import { apiClient } from "@/lib/api";
 import type { MatchFormat } from "@/types";
 
 // Form validation schema
@@ -163,15 +164,9 @@ export default function CreateLeaguePage() {
 				(name) => name.trim() !== "",
 			);
 
-			const response = await fetch("/api/leagues", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					...data,
-					participants: validParticipants,
-				}),
+			const response = await apiClient.post("/api/leagues", {
+				...data,
+				participants: validParticipants,
 			});
 
 			if (!response.ok) {

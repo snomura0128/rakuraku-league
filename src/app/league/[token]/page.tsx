@@ -1,5 +1,7 @@
 "use client";
 
+export const runtime = 'edge';
+
 import {
 	Ban,
 	Calendar,
@@ -37,6 +39,7 @@ import {
 	TabsTrigger,
 } from "@/components/ui";
 import { formatDate, formatMatchFormat } from "@/lib/utils";
+import { apiClient } from "@/lib/api";
 import type { LeagueDetail, Match, Player, Standing } from "@/types";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
@@ -80,7 +83,7 @@ export default function LeaguePage({ params }: LeaguePageProps) {
 	useEffect(() => {
 		async function fetchLeague() {
 			try {
-				const response = await fetch(`/api/leagues/${params.token}`);
+				const response = await apiClient.get(`/api/leagues/${params.token}`);
 
 				if (!response.ok) {
 					throw new Error("リーグ戦が見つかりません");
@@ -115,19 +118,13 @@ export default function LeaguePage({ params }: LeaguePageProps) {
 		tableId?: string,
 	) => {
 		try {
-			const response = await fetch(`/api/leagues/${params.token}/matches`, {
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					matchId,
-					status,
-					winnerId,
-					setsWonPlayer1,
-					setsWonPlayer2,
-					tableId,
-				}),
+			const response = await apiClient.patch(`/api/leagues/${params.token}/matches`, {
+				matchId,
+				status,
+				winnerId,
+				setsWonPlayer1,
+				setsWonPlayer2,
+				tableId,
 			});
 
 			if (!response.ok) {
@@ -135,7 +132,7 @@ export default function LeaguePage({ params }: LeaguePageProps) {
 			}
 
 			// リーグデータを再取得
-			const leagueResponse = await fetch(`/api/leagues/${params.token}`);
+			const leagueResponse = await apiClient.get(`/api/leagues/${params.token}`);
 			if (leagueResponse.ok) {
 				const result = await leagueResponse.json();
 				if (result.success) {
