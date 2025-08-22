@@ -1,6 +1,6 @@
 "use client";
 
-export const runtime = 'edge';
+export const runtime = "edge";
 
 import {
 	Ban,
@@ -38,8 +38,8 @@ import {
 	TabsList,
 	TabsTrigger,
 } from "@/components/ui";
-import { formatDate, formatMatchFormat } from "@/lib/utils";
 import { apiClient } from "@/lib/api";
+import { formatDate, formatMatchFormat } from "@/lib/utils";
 import type { LeagueDetail, Match, Player, Standing } from "@/types";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
@@ -118,21 +118,26 @@ export default function LeaguePage({ params }: LeaguePageProps) {
 		tableId?: string,
 	) => {
 		try {
-			const response = await apiClient.patch(`/api/leagues/${params.token}/matches`, {
-				matchId,
-				status,
-				winnerId,
-				setsWonPlayer1,
-				setsWonPlayer2,
-				tableId,
-			});
+			const response = await apiClient.patch(
+				`/api/leagues/${params.token}/matches`,
+				{
+					matchId,
+					status,
+					winnerId,
+					setsWonPlayer1,
+					setsWonPlayer2,
+					tableId,
+				},
+			);
 
 			if (!response.ok) {
 				throw new Error("試合の更新に失敗しました");
 			}
 
 			// リーグデータを再取得
-			const leagueResponse = await apiClient.get(`/api/leagues/${params.token}`);
+			const leagueResponse = await apiClient.get(
+				`/api/leagues/${params.token}`,
+			);
 			if (leagueResponse.ok) {
 				const result = await leagueResponse.json();
 				if (result.success) {

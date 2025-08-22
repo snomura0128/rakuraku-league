@@ -1,5 +1,5 @@
-export { Badge } from "./badge";
 export { Button } from "./Button";
+export { Badge } from "./badge";
 export {
 	Card,
 	CardContent,

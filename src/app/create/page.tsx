@@ -20,9 +20,10 @@ import {
 	WizardProgress,
 	WizardStep,
 } from "@/components/ui";
-import { formatMatchFormat } from "@/lib/utils";
 import { apiClient } from "@/lib/api";
+import { formatMatchFormat } from "@/lib/utils";
 import type { MatchFormat } from "@/types";
+import ThreeBackground from "@/components/ThreeBackground";
 
 // Form validation schema
 const createLeagueSchema = z.object({
@@ -189,6 +190,7 @@ export default function CreateLeaguePage() {
 
 	return (
 		<main className="min-h-screen bg-background-secondary">
+			<ThreeBackground />
 			{/* Header */}
 			<header className="bg-white shadow-sm border-b border-border-light">
 				<div className="container py-6">
