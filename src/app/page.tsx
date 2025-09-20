@@ -222,7 +222,7 @@ export default function HomePage() {
 										少人数でも楽しめる
 									</div>
 								</div>
-								
+
 								<div className="feature-card neumorphism p-6 md:p-8 text-center">
 									<i className="fas fa-users text-4xl text-orange-500 mb-6"></i>
 									<h3 className="font-semibold text-xl mb-4">地域サークル</h3>
@@ -246,7 +246,6 @@ export default function HomePage() {
 										部署対抗戦にも対応
 									</div>
 								</div>
-
 							</div>
 						</div>
 					</section>

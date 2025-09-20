@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import ThreeBackground from "@/components/ThreeBackground";
 import {
 	Button,
 	Card,
@@ -23,7 +24,6 @@ import {
 import { apiClient } from "@/lib/api";
 import { formatMatchFormat } from "@/lib/utils";
 import type { MatchFormat } from "@/types";
-import ThreeBackground from "@/components/ThreeBackground";
 
 // Form validation schema
 const createLeagueSchema = z.object({
@@ -191,364 +191,366 @@ export default function CreateLeaguePage() {
 	return (
 		<main className="min-h-screen bg-background-secondary">
 			<ThreeBackground />
-			{/* Header */}
-			<header className="bg-white shadow-sm border-b border-border-light">
-				<div className="container py-6">
-					<div className="flex items-center gap-4">
-						<Button variant="ghost" size="sm" asChild>
-							<Link href="/">← 戻る</Link>
-						</Button>
-						<div>
-							<h1 className="text-2xl font-bold text-primary">
-								リーグ戦を作成
-							</h1>
-							<p className="text-text-secondary mt-1">
-								{WIZARD_STEPS[currentStep].title}の設定を行ってください
-							</p>
+			<div className="relative z-10">
+				{/* Header */}
+				<header className="bg-white shadow-sm border-b border-border-light">
+					<div className="container py-6">
+						<div className="flex items-center gap-4">
+							<Button variant="ghost" size="sm" asChild>
+								<Link href="/">← 戻る</Link>
+							</Button>
+							<div>
+								<h1 className="text-2xl font-bold text-primary">
+									リーグ戦を作成
+								</h1>
+								<p className="text-text-secondary mt-1">
+									{WIZARD_STEPS[currentStep].title}の設定を行ってください
+								</p>
+							</div>
 						</div>
 					</div>
-				</div>
-			</header>
+				</header>
 
-			<div className="container py-8">
-				<div className="max-w-3xl mx-auto">
-					{/* Wizard Progress */}
-					<WizardProgress steps={getWizardSteps()} />
+				<div className="container py-8">
+					<div className="max-w-3xl mx-auto">
+						{/* Wizard Progress */}
+						<WizardProgress steps={getWizardSteps()} />
 
-					{/* Wizard Content */}
-					<Card className="min-h-96 relative">
-						<CardContent className="p-8">
-							<form onSubmit={handleSubmit(onSubmit)}>
-								{/* Step 1: Basic Information */}
-								<WizardStep
-									title="基本情報"
-									description="リーグ戦の名前と説明を入力してください"
-									isActive={currentStep === 0}
-								>
-									<div className="space-y-6">
-										<div className="space-y-2">
-											<Label htmlFor="name">
-												リーグ戦名 <span className="text-red-500">*</span>
-											</Label>
-											<Input
-												id="name"
-												type="text"
-												placeholder="例: 会社卓球部 12月リーグ戦"
-												{...register("name")}
-											/>
-											{errors.name && (
-												<p className="text-sm text-red-600">
-													{errors.name.message}
-												</p>
-											)}
-										</div>
-
-										<div className="space-y-2">
-											<Label htmlFor="description">説明</Label>
-											<Input
-												id="description"
-												type="text"
-												placeholder="例: 毎週金曜日の昼休みに実施。優勝者には豪華景品！"
-												{...register("description")}
-											/>
-											{errors.description && (
-												<p className="text-sm text-red-600">
-													{errors.description.message}
-												</p>
-											)}
-										</div>
-									</div>
-								</WizardStep>
-
-								{/* Step 3: Settings */}
-								<WizardStep
-									title="試合設定"
-									description="台数と試合形式を選択してください"
-									isActive={currentStep === 2}
-								>
-									<div className="space-y-6">
-										<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+						{/* Wizard Content */}
+						<Card className="min-h-96 relative bg-white">
+							<CardContent className="p-8">
+								<form onSubmit={handleSubmit(onSubmit)}>
+									{/* Step 1: Basic Information */}
+									<WizardStep
+										title="基本情報"
+										description="リーグ戦の名前と説明を入力してください"
+										isActive={currentStep === 0}
+									>
+										<div className="space-y-6">
 											<div className="space-y-2">
-												<Label htmlFor="table_count">
-													台数 <span className="text-red-500">*</span>
+												<Label htmlFor="name">
+													リーグ戦名 <span className="text-red-500">*</span>
 												</Label>
-												<Select
-													onValueChange={(value) =>
-														setValue("table_count", parseInt(value))
-													}
-													defaultValue="2"
-												>
-													<SelectTrigger id="table_count">
-														<SelectValue placeholder="台数を選択" />
-													</SelectTrigger>
-													<SelectContent>
-														{Array.from({ length: 10 }, (_, i) => i + 1).map(
-															(num) => (
-																<SelectItem key={num} value={num.toString()}>
-																	{num}台
-																</SelectItem>
-															),
-														)}
-													</SelectContent>
-												</Select>
-												{errors.table_count && (
+												<Input
+													id="name"
+													type="text"
+													placeholder="例: 会社卓球部 12月リーグ戦"
+													{...register("name")}
+												/>
+												{errors.name && (
 													<p className="text-sm text-red-600">
-														{errors.table_count.message}
+														{errors.name.message}
 													</p>
 												)}
 											</div>
 
 											<div className="space-y-2">
-												<Label htmlFor="match_format">
-													試合形式 <span className="text-red-500">*</span>
-												</Label>
-												<Select
-													onValueChange={(value) =>
-														setValue(
-															"match_format",
-															value as "1_game" | "3_game" | "5_game",
-														)
-													}
-													defaultValue="5_game"
-												>
-													<SelectTrigger id="match_format">
-														<SelectValue placeholder="試合形式を選択" />
-													</SelectTrigger>
-													<SelectContent>
-														<SelectItem value="1_game">
-															{formatMatchFormat("1_game")}
-														</SelectItem>
-														<SelectItem value="3_game">
-															{formatMatchFormat("3_game")}
-														</SelectItem>
-														<SelectItem value="5_game">
-															{formatMatchFormat("5_game")}
-														</SelectItem>
-													</SelectContent>
-												</Select>
-												{errors.match_format && (
+												<Label htmlFor="description">説明</Label>
+												<Input
+													id="description"
+													type="text"
+													placeholder="例: 毎週金曜日の昼休みに実施。優勝者には豪華景品！"
+													{...register("description")}
+												/>
+												{errors.description && (
 													<p className="text-sm text-red-600">
-														{errors.match_format.message}
+														{errors.description.message}
 													</p>
 												)}
 											</div>
 										</div>
+									</WizardStep>
 
-										<div className="p-4 bg-background-tertiary rounded-lg">
-											<div className="flex items-start gap-3">
-												<div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-													<svg
-														className="w-4 h-4 text-primary"
-														fill="none"
-														stroke="currentColor"
-														viewBox="0 0 24 24"
+									{/* Step 3: Settings */}
+									<WizardStep
+										title="試合設定"
+										description="台数と試合形式を選択してください"
+										isActive={currentStep === 2}
+									>
+										<div className="space-y-6">
+											<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+												<div className="space-y-2">
+													<Label htmlFor="table_count">
+														台数 <span className="text-red-500">*</span>
+													</Label>
+													<Select
+														onValueChange={(value) =>
+															setValue("table_count", parseInt(value))
+														}
+														defaultValue="2"
 													>
-														<path
-															strokeLinecap="round"
-															strokeLinejoin="round"
-															strokeWidth={2}
-															d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-														/>
-													</svg>
-												</div>
-												<div>
-													<p className="font-medium text-text-primary">
-														{formatMatchFormat(
-															watchedValues.match_format || "5_game",
-														)}
-													</p>
-													<p className="text-sm text-text-secondary mt-1">
-														{watchedValues.match_format === "1_game" &&
-															"1ゲーム勝負で勝敗を決定します"}
-														{watchedValues.match_format === "3_game" &&
-															"3ゲームのうち2ゲーム先取で勝敗を決定します"}
-														{watchedValues.match_format === "5_game" &&
-															"5ゲームのうち3ゲーム先取で勝敗を決定します"}
-													</p>
-												</div>
-											</div>
-										</div>
-									</div>
-								</WizardStep>
-
-								{/* Step 2: Participants */}
-								<WizardStep
-									title="選手"
-									description="選手の名前を入力してください（最低3名、最大15名）"
-									isActive={currentStep === 1}
-								>
-									<div className="space-y-4">
-										<div className="space-y-3">
-											{participants.map((participant, index) => (
-												<div key={index} className="flex items-start gap-3">
-													<div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
-														{index + 1}
-													</div>
-													<div className="flex-1">
-														<Input
-															placeholder={`選手 ${index + 1}`}
-															value={participant}
-															onChange={(e) =>
-																updateParticipant(index, e.target.value)
-															}
-														/>
-														{errors.participants?.[index] && (
-															<p className="text-sm text-red-600 mt-1">
-																{errors.participants[index]?.message}
-															</p>
-														)}
-													</div>
-													{participants.length > 3 && (
-														<Button
-															type="button"
-															variant="ghost"
-															size="sm"
-															onClick={() => removeParticipant(index)}
-															className="text-muted-foreground hover:text-red-500 p-2"
-														>
-															<svg
-																className="w-5 h-5"
-																fill="none"
-																stroke="currentColor"
-																viewBox="0 0 24 24"
-															>
-																<path
-																	strokeLinecap="round"
-																	strokeLinejoin="round"
-																	strokeWidth={2}
-																	d="M6 18L18 6M6 6l12 12"
-																/>
-															</svg>
-														</Button>
+														<SelectTrigger id="table_count">
+															<SelectValue placeholder="台数を選択" />
+														</SelectTrigger>
+														<SelectContent>
+															{Array.from({ length: 10 }, (_, i) => i + 1).map(
+																(num) => (
+																	<SelectItem key={num} value={num.toString()}>
+																		{num}台
+																	</SelectItem>
+																),
+															)}
+														</SelectContent>
+													</Select>
+													{errors.table_count && (
+														<p className="text-sm text-red-600">
+															{errors.table_count.message}
+														</p>
 													)}
 												</div>
-											))}
-										</div>
 
-										{participants.length < 15 && (
-											<Button
-												type="button"
-												variant="outline"
-												onClick={addParticipant}
-												className="w-full border-2 border-dashed h-auto p-4"
-											>
-												<span className="flex items-center justify-center gap-2">
-													<svg
-														className="w-5 h-5"
-														fill="none"
-														stroke="currentColor"
-														viewBox="0 0 24 24"
+												<div className="space-y-2">
+													<Label htmlFor="match_format">
+														試合形式 <span className="text-red-500">*</span>
+													</Label>
+													<Select
+														onValueChange={(value) =>
+															setValue(
+																"match_format",
+																value as "1_game" | "3_game" | "5_game",
+															)
+														}
+														defaultValue="5_game"
 													>
-														<path
-															strokeLinecap="round"
-															strokeLinejoin="round"
-															strokeWidth={2}
-															d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-														/>
-													</svg>
-													選手を追加
-												</span>
-											</Button>
-										)}
+														<SelectTrigger id="match_format">
+															<SelectValue placeholder="試合形式を選択" />
+														</SelectTrigger>
+														<SelectContent>
+															<SelectItem value="1_game">
+																{formatMatchFormat("1_game")}
+															</SelectItem>
+															<SelectItem value="3_game">
+																{formatMatchFormat("3_game")}
+															</SelectItem>
+															<SelectItem value="5_game">
+																{formatMatchFormat("5_game")}
+															</SelectItem>
+														</SelectContent>
+													</Select>
+													{errors.match_format && (
+														<p className="text-sm text-red-600">
+															{errors.match_format.message}
+														</p>
+													)}
+												</div>
+											</div>
 
-										{errors.participants &&
-											typeof errors.participants.message === "string" && (
-												<p className="text-sm text-red-600">
-													{errors.participants.message}
-												</p>
+											<div className="p-4 bg-background-tertiary rounded-lg">
+												<div className="flex items-start gap-3">
+													<div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+														<svg
+															className="w-4 h-4 text-primary"
+															fill="none"
+															stroke="currentColor"
+															viewBox="0 0 24 24"
+														>
+															<path
+																strokeLinecap="round"
+																strokeLinejoin="round"
+																strokeWidth={2}
+																d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+															/>
+														</svg>
+													</div>
+													<div>
+														<p className="font-medium text-text-primary">
+															{formatMatchFormat(
+																watchedValues.match_format || "5_game",
+															)}
+														</p>
+														<p className="text-sm text-text-secondary mt-1">
+															{watchedValues.match_format === "1_game" &&
+																"1ゲーム勝負で勝敗を決定します"}
+															{watchedValues.match_format === "3_game" &&
+																"3ゲームのうち2ゲーム先取で勝敗を決定します"}
+															{watchedValues.match_format === "5_game" &&
+																"5ゲームのうち3ゲーム先取で勝敗を決定します"}
+														</p>
+													</div>
+												</div>
+											</div>
+										</div>
+									</WizardStep>
+
+									{/* Step 2: Participants */}
+									<WizardStep
+										title="選手"
+										description="選手の名前を入力してください（最低3名、最大15名）"
+										isActive={currentStep === 1}
+									>
+										<div className="space-y-4">
+											<div className="space-y-3">
+												{participants.map((participant, index) => (
+													<div key={index} className="flex items-start gap-3">
+														<div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+															{index + 1}
+														</div>
+														<div className="flex-1">
+															<Input
+																placeholder={`選手 ${index + 1}`}
+																value={participant}
+																onChange={(e) =>
+																	updateParticipant(index, e.target.value)
+																}
+															/>
+															{errors.participants?.[index] && (
+																<p className="text-sm text-red-600 mt-1">
+																	{errors.participants[index]?.message}
+																</p>
+															)}
+														</div>
+														{participants.length > 3 && (
+															<Button
+																type="button"
+																variant="ghost"
+																size="sm"
+																onClick={() => removeParticipant(index)}
+																className="text-muted-foreground hover:text-red-500 p-2"
+															>
+																<svg
+																	className="w-5 h-5"
+																	fill="none"
+																	stroke="currentColor"
+																	viewBox="0 0 24 24"
+																>
+																	<path
+																		strokeLinecap="round"
+																		strokeLinejoin="round"
+																		strokeWidth={2}
+																		d="M6 18L18 6M6 6l12 12"
+																	/>
+																</svg>
+															</Button>
+														)}
+													</div>
+												))}
+											</div>
+
+											{participants.length < 15 && (
+												<Button
+													type="button"
+													variant="outline"
+													onClick={addParticipant}
+													className="w-full border-2 border-dashed h-auto p-4"
+												>
+													<span className="flex items-center justify-center gap-2">
+														<svg
+															className="w-5 h-5"
+															fill="none"
+															stroke="currentColor"
+															viewBox="0 0 24 24"
+														>
+															<path
+																strokeLinecap="round"
+																strokeLinejoin="round"
+																strokeWidth={2}
+																d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+															/>
+														</svg>
+														選手を追加
+													</span>
+												</Button>
 											)}
 
-										<div className="text-sm text-text-tertiary">
-											現在 {participants.filter((p) => p.trim()).length}名 /
-											最大15名
-										</div>
-									</div>
-								</WizardStep>
+											{errors.participants &&
+												typeof errors.participants.message === "string" && (
+													<p className="text-sm text-red-600">
+														{errors.participants.message}
+													</p>
+												)}
 
-								{/* Step 4: Confirmation */}
-								<WizardStep
-									title="設定内容の確認"
-									description="以下の内容でリーグ戦を作成します"
-									isActive={currentStep === 3}
-								>
-									<div className="bg-gray-50 rounded-lg p-6 space-y-6">
-										{/* リーグ戦名 */}
-										<div className="flex justify-between items-start gap-4 py-3 border-b border-gray-200">
-											<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
-												リーグ戦名
-											</div>
-											<div className="text-right font-medium text-gray-900 min-w-0">
-												{watchedValues.name || "（未入力）"}
+											<div className="text-sm text-text-tertiary">
+												現在 {participants.filter((p) => p.trim()).length}名 /
+												最大15名
 											</div>
 										</div>
-										{/* 説明 */}
-										{watchedValues.description && (
+									</WizardStep>
+
+									{/* Step 4: Confirmation */}
+									<WizardStep
+										title="設定内容の確認"
+										description="以下の内容でリーグ戦を作成します"
+										isActive={currentStep === 3}
+									>
+										<div className="bg-gray-50 rounded-lg p-6 space-y-6">
+											{/* リーグ戦名 */}
 											<div className="flex justify-between items-start gap-4 py-3 border-b border-gray-200">
 												<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
-													説明
+													リーグ戦名
 												</div>
-												<div className="text-right text-gray-900 min-w-0">
-													{watchedValues.description}
+												<div className="text-right font-medium text-gray-900 min-w-0">
+													{watchedValues.name || "（未入力）"}
 												</div>
 											</div>
-										)}
+											{/* 説明 */}
+											{watchedValues.description && (
+												<div className="flex justify-between items-start gap-4 py-3 border-b border-gray-200">
+													<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
+														説明
+													</div>
+													<div className="text-right text-gray-900 min-w-0">
+														{watchedValues.description}
+													</div>
+												</div>
+											)}
 
-										{/* 選手一覧 */}
-										<div className="py-3 border-b border-gray-200">
-											<div className="text-sm font-medium text-gray-600 mb-3">
-												選手一覧
+											{/* 選手一覧 */}
+											<div className="py-3 border-b border-gray-200">
+												<div className="text-sm font-medium text-gray-600 mb-3">
+													選手一覧
+												</div>
+												<div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+													{participants
+														.filter((p) => p.trim())
+														.map((participant, index) => (
+															<div
+																key={index}
+																className="bg-white rounded px-3 py-2 text-sm text-gray-900"
+															>
+																{index + 1}. {participant}
+															</div>
+														))}
+												</div>
 											</div>
-											<div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-												{participants
-													.filter((p) => p.trim())
-													.map((participant, index) => (
-														<div
-															key={index}
-															className="bg-white rounded px-3 py-2 text-sm text-gray-900"
-														>
-															{index + 1}. {participant}
-														</div>
-													))}
+
+											{/* 台数 */}
+											<div className="flex justify-between items-start gap-4 py-3 border-b border-gray-200">
+												<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
+													台数
+												</div>
+												<div className="text-right font-medium text-gray-900 min-w-0">
+													{watchedValues.table_count}台
+												</div>
+											</div>
+
+											{/* 試合形式 */}
+											<div className="flex justify-between items-start gap-4 py-3">
+												<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
+													試合形式
+												</div>
+												<div className="text-right font-medium text-gray-900 min-w-0">
+													{formatMatchFormat(
+														watchedValues.match_format || "5_game",
+													)}
+												</div>
 											</div>
 										</div>
+									</WizardStep>
 
-										{/* 台数 */}
-										<div className="flex justify-between items-start gap-4 py-3 border-b border-gray-200">
-											<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
-												台数
-											</div>
-											<div className="text-right font-medium text-gray-900 min-w-0">
-												{watchedValues.table_count}台
-											</div>
-										</div>
-
-										{/* 試合形式 */}
-										<div className="flex justify-between items-start gap-4 py-3">
-											<div className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
-												試合形式
-											</div>
-											<div className="text-right font-medium text-gray-900 min-w-0">
-												{formatMatchFormat(
-													watchedValues.match_format || "5_game",
-												)}
-											</div>
-										</div>
-									</div>
-								</WizardStep>
-
-								{/* Navigation */}
-								<WizardNavigation
-									currentStep={currentStep}
-									totalSteps={WIZARD_STEPS.length}
-									onPrevious={handlePrevious}
-									onNext={handleNext}
-									onComplete={onSubmit}
-									isNextDisabled={false}
-									isSubmitting={isSubmitting}
-								/>
-							</form>
-						</CardContent>
-					</Card>
+									{/* Navigation */}
+									<WizardNavigation
+										currentStep={currentStep}
+										totalSteps={WIZARD_STEPS.length}
+										onPrevious={handlePrevious}
+										onNext={handleNext}
+										onComplete={onSubmit}
+										isNextDisabled={false}
+										isSubmitting={isSubmitting}
+									/>
+								</form>
+							</CardContent>
+						</Card>
+					</div>
 				</div>
 			</div>
 		</main>

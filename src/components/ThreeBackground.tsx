@@ -202,11 +202,7 @@ const ThreeBackground = () => {
 	}, []);
 
 	return (
-		<div
-			ref={containerRef}
-			className="fixed inset-0 pointer-events-none"
-			style={{ zIndex: 1 }}
-		/>
+		<div ref={containerRef} className="fixed inset-0 pointer-events-none z-0" />
 	);
 };
 
