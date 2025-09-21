@@ -3,23 +3,6 @@
  */
 
 const getApiBaseUrl = () => {
-	// Check if we're in the browser
-	if (typeof window !== "undefined") {
-		// URLベースで環境を判定
-		const hostname = window.location.hostname;
-
-		if (hostname === "localhost") {
-			return "http://localhost:8787";
-		} else if (hostname.includes("rakuraku-league-dev.pages.dev")) {
-			return "https://rakuraku-league-api.tomra-3104.workers.dev";
-		} else if (hostname === "rakuraku-league.com") {
-			return "https://rakuraku-league-api-prod.tomra-3104.workers.dev";
-		}
-
-		// フォールバック
-		return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787";
-	}
-	// Server-side fallback
 	return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787";
 };
 

@@ -679,7 +679,10 @@ function MobileMatchCards({
 								{match.status === "completed" && match.winner_id ? (
 									<div className="text-center">
 										<div className="text-lg font-bold text-gray-800">
-											{match.sets_won_player1} - {match.sets_won_player2}
+											{/* UIのplayer1/player2の順番に合わせてスコアを表示 */}
+											{match.player1_id === player1.id
+												? `${match.sets_won_player1} - ${match.sets_won_player2}`
+												: `${match.sets_won_player2} - ${match.sets_won_player1}`}
 										</div>
 										<div className="text-sm text-gray-600 mt-1">
 											勝者:{" "}
@@ -745,7 +748,9 @@ function MatchCell({
 				setCheckmarkAnimationData(checkmark);
 				setXMarkAnimationData(xMark);
 			})
-			.catch(console.error);
+			.catch(() => {
+				// Silently handle animation loading errors
+			});
 	}, []);
 
 	if (!match) return null;
@@ -773,14 +778,25 @@ function MatchCell({
 	const renderCompletedMatch = () => {
 		if (match.status !== "completed" || !match.winner_id) return null;
 
-		const isPlayer1Winner = match.winner_id === player1.id;
-		const winnerSets = isPlayer1Winner
-			? match.sets_won_player1
-			: match.sets_won_player2;
-		const loserSets = isPlayer1Winner
-			? match.sets_won_player2
-			: match.sets_won_player1;
-		const animationData = isPlayer1Winner
+		// データベースのplayer1_id/player2_idと実際のUIのplayer1/player2のマッピングを確認
+		const isDBPlayer1 = match.player1_id === player1.id;
+		const isUIPlayer1Winner = match.winner_id === player1.id;
+
+		// UIのplayer1/player2の順番に基づいてスコアを正しく表示
+		let player1Score: number;
+		let player2Score: number;
+
+		if (isDBPlayer1) {
+			// UIのplayer1がDBのplayer1と同じ場合
+			player1Score = match.sets_won_player1;
+			player2Score = match.sets_won_player2;
+		} else {
+			// UIのplayer1がDBのplayer2の場合（位置が逆）
+			player1Score = match.sets_won_player2;
+			player2Score = match.sets_won_player1;
+		}
+
+		const animationData = isUIPlayer1Winner
 			? checkmarkAnimationData
 			: xMarkAnimationData;
 
@@ -797,7 +813,7 @@ function MatchCell({
 					)}
 				</div>
 				<div className="text-xs font-medium">
-					{winnerSets}-{loserSets}
+					{player1Score}-{player2Score}
 				</div>
 			</div>
 		);

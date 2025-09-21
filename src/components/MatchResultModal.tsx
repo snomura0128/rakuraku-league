@@ -144,12 +144,27 @@ export default function MatchResultModal({
 
 		setIsSubmitting(true);
 		try {
+			// データベースのplayer1_id/player2_idの順番に合わせてスコアを調整
+			const isDBPlayer1 = match.player1_id === player1.id;
+			let dbSetsWonPlayer1: number;
+			let dbSetsWonPlayer2: number;
+
+			if (isDBPlayer1) {
+				// UIのplayer1がDBのplayer1と同じ場合
+				dbSetsWonPlayer1 = setsWonPlayer1;
+				dbSetsWonPlayer2 = setsWonPlayer2;
+			} else {
+				// UIのplayer1がDBのplayer2の場合（位置が逆）
+				dbSetsWonPlayer1 = setsWonPlayer2;
+				dbSetsWonPlayer2 = setsWonPlayer1;
+			}
+
 			await onUpdateMatch(
 				match.id,
 				"completed",
 				winnerId,
-				setsWonPlayer1,
-				setsWonPlayer2,
+				dbSetsWonPlayer1,
+				dbSetsWonPlayer2,
 			);
 			onClose();
 		} catch (error) {
@@ -319,7 +334,10 @@ export default function MatchResultModal({
 									の勝利
 								</div>
 								<div className="text-gray-600 mt-1">
-									スコア: {match.sets_won_player1}-{match.sets_won_player2}
+									{/* UIのplayer1/player2の順番に合わせてスコアを表示 */}
+									スコア: {match.player1_id === player1.id 
+										? `${match.sets_won_player1}-${match.sets_won_player2}`
+										: `${match.sets_won_player2}-${match.sets_won_player1}`}
 								</div>
 							</div>
 						</div>

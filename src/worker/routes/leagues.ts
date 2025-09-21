@@ -50,31 +50,37 @@ app.post("/", async (c) => {
 			updated_at: new Date().toISOString(),
 		});
 
-		// Create players
 		const participantIds = validatedData.participants.map(() => generateId());
-		await db.insert(players).values(
-			validatedData.participants.map((name, index) => ({
-				id: participantIds[index],
-				league_id: leagueId,
-				name,
-				created_at: new Date().toISOString(),
-			})),
-		);
+		const playerData = validatedData.participants.map((name, index) => ({
+			id: participantIds[index],
+			league_id: leagueId,
+			name,
+			created_at: new Date().toISOString(),
+		}));
 
-		// Create tables
+		const PLAYER_BATCH_SIZE = 10;
+		for (let i = 0; i < playerData.length; i += PLAYER_BATCH_SIZE) {
+			const batch = playerData.slice(i, i + PLAYER_BATCH_SIZE);
+			await db.insert(players).values(batch);
+		}
+
 		const tableIds = Array.from({ length: validatedData.table_count }, () =>
 			generateId(),
 		);
-		await db.insert(tables).values(
-			tableIds.map((id, index) => ({
-				id,
-				league_id: leagueId,
-				table_number: index + 1,
-				status: "available" as const,
-				created_at: new Date().toISOString(),
-				updated_at: new Date().toISOString(),
-			})),
-		);
+		const tableData = tableIds.map((id, index) => ({
+			id,
+			league_id: leagueId,
+			table_number: index + 1,
+			status: "available" as const,
+			created_at: new Date().toISOString(),
+			updated_at: new Date().toISOString(),
+		}));
+
+		const TABLE_BATCH_SIZE = 10;
+		for (let i = 0; i < tableData.length; i += TABLE_BATCH_SIZE) {
+			const batch = tableData.slice(i, i + TABLE_BATCH_SIZE);
+			await db.insert(tables).values(batch);
+		}
 
 		// Generate all possible matches (round-robin)
 		const matchData = [];
@@ -94,7 +100,11 @@ app.post("/", async (c) => {
 			}
 		}
 
-		await db.insert(matches).values(matchData);
+		const MATCH_BATCH_SIZE = 10;
+		for (let i = 0; i < matchData.length; i += MATCH_BATCH_SIZE) {
+			const batch = matchData.slice(i, i + MATCH_BATCH_SIZE);
+			await db.insert(matches).values(batch);
+		}
 
 		// Generate URLs using environment-aware base URL
 		const baseUrl =
