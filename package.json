@@ -6,6 +6,8 @@
     "vercel-build": "next build",
     "dev": "next dev",
     "worker": "wrangler dev --local --config wrangler.worker.toml",
+    "lint": "biome check .",
+    "biome:fix": "biome format --write .",
     "local:all": "concurrently -k -n FRONT,API -c green,cyan \"npm run dev\" \"npm run worker\"",
     "build:cf": "npx @cloudflare/next-on-pages@1",
     "build:cf:dev": "dotenv -e .env.development -- npx @cloudflare/next-on-pages@1",
@@ -48,7 +50,7 @@
     "zod": "^4.0.17"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.2.0",
+    "@biomejs/biome": "^2.2.4",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
