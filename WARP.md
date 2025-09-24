@@ -1,4 +1,4 @@
-# AGENTS.md
+# WARP.md
 
 このリポジトリで Warp (warp.dev) が作業する際のガイダンスです。
 
